@@ -23,12 +23,16 @@ class Database:
     def close(self):
         self.connection.close()
 
+
 def create_tables():
 
     db = Database()
 
+    # ==========================
+    # Customers Table
+    # ==========================
+    
     db.execute("""
-
     CREATE TABLE IF NOT EXISTS customers(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,11 +44,13 @@ def create_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
     )
-
     """)
 
-    db.execute("""
+    # ==========================
+    # Customer Aliases
+    # ==========================
 
+    db.execute("""
     CREATE TABLE IF NOT EXISTS aliases(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,32 +59,39 @@ def create_tables():
 
         alias TEXT UNIQUE,
 
-        FOREIGN KEY(customer_id) REFERENCES customers(id)
+        FOREIGN KEY(customer_id)
+        REFERENCES customers(id)
 
     )
-
     """)
 
-    db.execute("""
+    # ==========================
+    # Transactions
+    # ==========================
 
+    db.execute("""
     CREATE TABLE IF NOT EXISTS transactions(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        customer_id INTEGER,
+        customer_id INTEGER NOT NULL,
 
-        type TEXT,
+        transaction_type TEXT NOT NULL
+        CHECK(transaction_type IN ('UDHAR','PAYMENT')),
 
-        amount REAL,
+        amount REAL NOT NULL
+        CHECK(amount > 0),
+
+        item_name TEXT,
 
         note TEXT,
 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-        FOREIGN KEY(customer_id) REFERENCES customers(id)
+        FOREIGN KEY(customer_id)
+        REFERENCES customers(id)
 
     )
-
     """)
 
     db.close()
