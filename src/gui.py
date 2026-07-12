@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from dashboard import Dashboard
+from customer_page import CustomerPage
 
 # Theme
 ctk.set_appearance_mode("Light")
@@ -21,7 +22,7 @@ class GroceryGUI(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
 
         self.create_sidebar()
-        self.create_dashboard()
+        self.create_content()
 
     # ----------------------------------------
     # Sidebar
@@ -50,19 +51,26 @@ class GroceryGUI(ctk.CTk):
         title.pack(pady=(30, 20))
 
         buttons = [
-            "🏠 Dashboard",
-            "👤 Customers",
-            "💰 Transactions",
-            "📊 Reports",
-            "⚙ Settings"
+
+            ("🏠 Dashboard", self.show_dashboard),
+
+            ("👤 Customers", self.show_customers),
+
+            ("💰 Transactions", self.not_ready),
+
+            ("📊 Reports", self.not_ready),
+
+            ("⚙ Settings", self.not_ready)
+
         ]
 
-        for text in buttons:
+        for text, command in buttons:
 
             button = ctk.CTkButton(
                 self.sidebar,
                 text=text,
-                height=40
+                height=40,
+                command=command
             )
 
             button.pack(
@@ -72,10 +80,10 @@ class GroceryGUI(ctk.CTk):
             )
 
     # ----------------------------------------
-    # Dashboard
+    # Content Area
     # ----------------------------------------
 
-    def create_dashboard(self):
+    def create_content(self):
 
         self.content = ctk.CTkFrame(self)
 
@@ -87,6 +95,25 @@ class GroceryGUI(ctk.CTk):
             pady=15
         )
 
+        self.show_dashboard()
+
+    # ----------------------------------------
+    # Clear Page
+    # ----------------------------------------
+
+    def clear_content(self):
+
+        for widget in self.content.winfo_children():
+            widget.destroy()
+
+    # ----------------------------------------
+    # Dashboard
+    # ----------------------------------------
+
+    def show_dashboard(self):
+
+        self.clear_content()
+
         dashboard = Dashboard(self.content)
 
         dashboard.pack(
@@ -96,6 +123,38 @@ class GroceryGUI(ctk.CTk):
             pady=20
         )
 
+    # ----------------------------------------
+    # Customers
+    # ----------------------------------------
+
+    def show_customers(self):
+
+        self.clear_content()
+
+        page = CustomerPage(self.content)
+
+        page.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
+        )
+
+    # ----------------------------------------
+    # Placeholder Pages
+    # ----------------------------------------
+
+    def not_ready(self):
+
+        self.clear_content()
+
+        label = ctk.CTkLabel(
+            self.content,
+            text="🚧 This module is under development.",
+            font=("Arial", 24, "bold")
+        )
+
+        label.pack(expand=True)
 
 # ----------------------------------------
 # Run Application
