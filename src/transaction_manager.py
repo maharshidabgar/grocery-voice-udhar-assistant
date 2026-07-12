@@ -6,6 +6,10 @@ class TransactionManager:
     def __init__(self):
         self.db = Database()
 
+    # ---------------------------------
+    # Add Udhar
+    # ---------------------------------
+
     def add_udhar(self, customer_id, amount, item_name="", note=""):
 
         self.db.execute(
@@ -31,6 +35,10 @@ class TransactionManager:
 
         return "Udhar added successfully."
 
+    # ---------------------------------
+    # Add Payment
+    # ---------------------------------
+
     def add_payment(self, customer_id, amount, note=""):
 
         self.db.execute(
@@ -54,6 +62,10 @@ class TransactionManager:
 
         return "Payment added successfully."
 
+    # ---------------------------------
+    # Customer Transactions
+    # ---------------------------------
+
     def get_customer_transactions(self, customer_id):
 
         return self.db.fetchall(
@@ -66,13 +78,15 @@ class TransactionManager:
                 note,
                 created_at
             FROM transactions
-            WHERE customer_id=?
+            WHERE customer_id = ?
             ORDER BY created_at
             """,
-            (
-                customer_id,
-            ),
+            (customer_id,),
         )
+
+    # ---------------------------------
+    # Customer Balance
+    # ---------------------------------
 
     def get_balance(self, customer_id):
 
@@ -82,35 +96,78 @@ class TransactionManager:
                 transaction_type,
                 amount
             FROM transactions
-            WHERE customer_id=?
+            WHERE customer_id = ?
             """,
-            (
-                customer_id,
-            ),
+            (customer_id,),
         )
 
-        balance = 0
+        balance = 0.0
 
         for transaction_type, amount in rows:
 
             if transaction_type == "UDHAR":
                 balance += amount
 
-            else:
+            elif transaction_type == "PAYMENT":
                 balance -= amount
 
         return balance
+
+    # ---------------------------------
+    # Customer Ledger
+    # ---------------------------------
+
+    def get_customer_ledger(self, customer_id):
+
+        return self.db.fetchall(
+            """
+            SELECT
+                id,
+                transaction_type,
+                amount,
+                item_name,
+                note,
+                created_at
+            FROM transactions
+            WHERE customer_id = ?
+            ORDER BY created_at
+            """,
+            (customer_id,),
+        )
+
+    # ---------------------------------
+    # Today's Report
+    # ---------------------------------
+
+    def get_today_transactions(self):
+
+        return self.db.fetchall(
+            """
+            SELECT
+                customer_id,
+                transaction_type,
+                amount,
+                item_name,
+                note,
+                created_at
+            FROM transactions
+            WHERE DATE(created_at) = DATE('now','localtime')
+            ORDER BY created_at
+            """
+        )
+
+    # ---------------------------------
+    # Delete Transaction
+    # ---------------------------------
 
     def delete_transaction(self, transaction_id):
 
         self.db.execute(
             """
             DELETE FROM transactions
-            WHERE id=?
+            WHERE id = ?
             """,
-            (
-                transaction_id,
-            ),
+            (transaction_id,),
         )
 
         return "Transaction deleted successfully."
