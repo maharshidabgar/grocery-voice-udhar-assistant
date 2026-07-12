@@ -1,9 +1,7 @@
 import customtkinter as ctk
+from dashboard import Dashboard
 
-
-# -----------------------------
-# Application Settings
-# -----------------------------
+# Theme
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
@@ -13,16 +11,22 @@ class GroceryGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        # Window
         self.title("🛒 Grocery Voice Udhar Assistant")
         self.geometry("1200x700")
         self.minsize(1000, 600)
 
+        # Layout
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
         self.create_sidebar()
         self.create_dashboard()
 
-    # -----------------------------
+    # ----------------------------------------
     # Sidebar
-    # -----------------------------
+    # ----------------------------------------
+
     def create_sidebar(self):
 
         self.sidebar = ctk.CTkFrame(
@@ -31,9 +35,10 @@ class GroceryGUI(ctk.CTk):
             corner_radius=0
         )
 
-        self.sidebar.pack(
-            side="left",
-            fill="y"
+        self.sidebar.grid(
+            row=0,
+            column=0,
+            sticky="ns"
         )
 
         title = ctk.CTkLabel(
@@ -42,9 +47,9 @@ class GroceryGUI(ctk.CTk):
             font=("Arial", 22, "bold")
         )
 
-        title.pack(pady=30)
+        title.pack(pady=(30, 20))
 
-        menu = [
+        buttons = [
             "🏠 Dashboard",
             "👤 Customers",
             "💰 Transactions",
@@ -52,49 +57,49 @@ class GroceryGUI(ctk.CTk):
             "⚙ Settings"
         ]
 
-        for item in menu:
+        for text in buttons:
 
-            btn = ctk.CTkButton(
+            button = ctk.CTkButton(
                 self.sidebar,
-                text=item,
+                text=text,
                 height=40
             )
 
-            btn.pack(
+            button.pack(
+                fill="x",
                 padx=15,
-                pady=8,
-                fill="x"
+                pady=8
             )
 
-    # -----------------------------
+    # ----------------------------------------
     # Dashboard
-    # -----------------------------
+    # ----------------------------------------
+
     def create_dashboard(self):
 
         self.content = ctk.CTkFrame(self)
 
-        self.content.pack(
-            side="right",
+        self.content.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=15,
+            pady=15
+        )
+
+        dashboard = Dashboard(self.content)
+
+        dashboard.pack(
             fill="both",
-            expand=True
+            expand=True,
+            padx=20,
+            pady=20
         )
 
-        heading = ctk.CTkLabel(
-            self.content,
-            text="Dashboard",
-            font=("Arial", 28, "bold")
-        )
 
-        heading.pack(pady=30)
-
-        welcome = ctk.CTkLabel(
-            self.content,
-            text="Welcome to Grocery Voice Udhar Assistant",
-            font=("Arial", 18)
-        )
-
-        welcome.pack(pady=10)
-
+# ----------------------------------------
+# Run Application
+# ----------------------------------------
 
 if __name__ == "__main__":
 
