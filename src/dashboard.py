@@ -1,10 +1,13 @@
 import customtkinter as ctk
+from dashboard_manager import DashboardManager
 
 
 class Dashboard(ctk.CTkFrame):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.manager = DashboardManager()
 
         self.create_widgets()
 
@@ -47,7 +50,7 @@ class Dashboard(ctk.CTkFrame):
 
         self.cards_frame.grid_columnconfigure(0, weight=1)
         self.cards_frame.grid_columnconfigure(1, weight=1)
-        
+
         self.cards_frame.grid_rowconfigure(0, weight=1)
         self.cards_frame.grid_rowconfigure(1, weight=1)
 
@@ -55,32 +58,32 @@ class Dashboard(ctk.CTkFrame):
 
         self.create_card(
             "👥 Total Customers",
-            "0",
+            str(self.manager.total_customers()),
             0,
             0
-        )
+            )
 
         self.create_card(
             "💰 Today's Udhar",
-            "₹0",
+            f"₹{self.manager.today_udhar():.2f}",
             0,
             1
         )
 
         self.create_card(
             "💵 Today's Payment",
-            "₹0",
+            f"₹{self.manager.today_payment():.2f}",
             1,
             0
         )
 
         self.create_card(
             "📦 Pending Balance",
-            "₹0",
+            f"₹{self.manager.pending_balance():.2f}",
             1,
             1
         )
-
+    
     # ---------------------------------------
     # Card Widget
     # ---------------------------------------
