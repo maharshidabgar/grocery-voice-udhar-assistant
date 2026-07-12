@@ -1,10 +1,13 @@
 import customtkinter as ctk
+from customer_manager import CustomerManager
 
 
 class CustomerPage(ctk.CTkFrame):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.manager = CustomerManager()
 
         self.pack(
             fill="both",
@@ -83,12 +86,13 @@ class CustomerPage(ctk.CTkFrame):
             pady=10
         )
 
-        # Button
+        # Add Button
 
         self.add_button = ctk.CTkButton(
             form,
             text="➕ Add Customer",
-            width=180
+            width=180,
+            command=self.add_customer
         )
 
         self.add_button.grid(
@@ -106,3 +110,28 @@ class CustomerPage(ctk.CTkFrame):
         )
 
         placeholder.pack(pady=40)
+
+    # ---------------------------------------
+    # Add Customer
+    # ---------------------------------------
+
+    def add_customer(self):
+
+        name = self.name_entry.get().strip()
+        mobile = self.mobile_entry.get().strip()
+
+        try:
+
+            message = self.manager.add_customer(
+                name,
+                mobile
+            )
+
+            print(message)
+
+            self.name_entry.delete(0, "end")
+            self.mobile_entry.delete(0, "end")
+
+        except Exception as e:
+
+            print(e)
