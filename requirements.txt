@@ -4,3 +4,4 @@ pyttsx3
 pandas
 openpyxl
 Pillow
+customtkinter3
