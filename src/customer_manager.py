@@ -14,8 +14,12 @@ class CustomerManager:
         mobile = validate_mobile(mobile)
 
         existing = self.db.fetchone(
-            "SELECT id FROM customers WHERE LOWER(name)=LOWER(?)",
-            (name,)
+            """
+            SELECT id
+            FROM customers
+            WHERE LOWER(name)=LOWER(?)
+            """,
+            (name,),
         )
 
         if existing:
@@ -28,7 +32,7 @@ class CustomerManager:
             INSERT INTO customers(name,mobile)
             VALUES(?,?)
             """,
-            (name, mobile)
+            (name, mobile),
         )
 
         return f"{name} added successfully."
@@ -37,8 +41,30 @@ class CustomerManager:
 
         return self.db.fetchall(
             """
-            SELECT id,name,mobile
+            SELECT id, name, mobile
             FROM customers
             ORDER BY name
             """
+        )
+
+    def get_customer_by_id(self, customer_id):
+
+        return self.db.fetchone(
+            """
+            SELECT id, name, mobile
+            FROM customers
+            WHERE id = ?
+            """,
+            (customer_id,),
+        )
+
+    def find_customer_by_name(self, name):
+
+        return self.db.fetchone(
+            """
+            SELECT id, name
+            FROM customers
+            WHERE LOWER(name)=LOWER(?)
+            """,
+            (name,),
         )
