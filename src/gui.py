@@ -2,6 +2,7 @@ import customtkinter as ctk
 from dashboard import Dashboard
 from customer_page import CustomerPage
 from transaction_page import TransactionPage
+from ledger_page import LedgerPage
 
 # Theme
 ctk.set_appearance_mode("Light")
@@ -58,6 +59,8 @@ class GroceryGUI(ctk.CTk):
             ("👤 Customers", self.show_customers),
 
             ("💰 Transactions", self.show_transactions),
+
+            ("📒 Ledger", self.show_ledger),
 
             ("📊 Reports", self.not_ready),
 
@@ -150,6 +153,23 @@ class GroceryGUI(ctk.CTk):
         self.clear_content()
 
         page = TransactionPage(self.content)
+
+        page.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
+        )
+
+    # ----------------------------------------
+    # Ledger
+    # ----------------------------------------
+
+    def show_ledger(self):
+
+        self.clear_content()
+
+        page = LedgerPage(self.content)
 
         page.pack(
             fill="both",
