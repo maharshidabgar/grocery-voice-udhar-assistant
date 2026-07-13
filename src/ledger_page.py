@@ -76,7 +76,8 @@ class LedgerPage(ctk.CTkFrame):
 
         self.show_button = ctk.CTkButton(
             top_frame,
-            text="📒 Show Ledger"
+            text="📒 Show Ledger",
+            command=self.show_ledger
         )
 
         self.show_button.grid(
@@ -123,6 +124,14 @@ class LedgerPage(ctk.CTkFrame):
 
         self.load_customers()
 
+    # ---------------------------------------
+    # Show Ledger
+    # ---------------------------------------
+
+    def show_ledger(self):
+
+        print("Ledger Button Clicked")
+        
     # ---------------------------------------
     # Load Customers
     # ---------------------------------------
