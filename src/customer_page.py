@@ -90,7 +90,9 @@ class CustomerPage(ctk.CTkFrame):
             pady=10
         )
 
+        # ---------------------------------------
         # Add Customer Button
+        # ---------------------------------------
 
         self.add_button = ctk.CTkButton(
             form,
@@ -102,7 +104,28 @@ class CustomerPage(ctk.CTkFrame):
         self.add_button.grid(
             row=2,
             column=1,
-            pady=20
+            padx=10,
+            pady=20,
+            sticky="w"
+        )
+
+        # ---------------------------------------
+        # Refresh Button
+        # ---------------------------------------
+
+        self.refresh_button = ctk.CTkButton(
+            form,
+            text="🔄 Refresh",
+            width=150,
+            command=self.refresh_page
+        )
+
+        self.refresh_button.grid(
+            row=2,
+            column=2,
+            padx=10,
+            pady=20,
+            sticky="w"
         )
 
         # ---------------------------------------
@@ -287,3 +310,15 @@ class CustomerPage(ctk.CTkFrame):
         keyword = self.search_entry.get().strip()
 
         self.load_customers(keyword)
+        
+    # ---------------------------------------
+    # Refresh Page
+    # ---------------------------------------
+
+    def refresh_page(self):
+
+        self.name_entry.delete(0, "end")
+        self.mobile_entry.delete(0, "end")
+        self.search_entry.delete(0, "end")
+
+        self.load_customers()
