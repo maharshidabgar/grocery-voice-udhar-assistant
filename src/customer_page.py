@@ -172,28 +172,56 @@ class CustomerPage(ctk.CTkFrame):
 
             return
 
-        header = ctk.CTkLabel(
-            self.customer_list,
-            text=f"{'ID':<5}{'Name':<25}{'Mobile'}",
-            font=("Courier New", 16, "bold")
-        )
+        # Header
 
-        header.pack(
-            anchor="w",
-            padx=10,
-            pady=(10, 5)
-        )
+        header = ctk.CTkFrame(self.customer_list)
+
+        header.pack(fill="x", padx=5, pady=5)
+
+        ctk.CTkLabel(
+            header,
+            text="ID",
+            width=60,
+            font=("Arial", 15, "bold")
+        ).grid(row=0, column=0)
+
+        ctk.CTkLabel(
+            header,
+            text="Customer Name",
+            width=250,
+            font=("Arial", 15, "bold")
+        ).grid(row=0, column=1)
+
+        ctk.CTkLabel(
+            header,
+            text="Mobile",
+            width=180,
+            font=("Arial", 15, "bold")
+        ).grid(row=0, column=2)
+
+        # Data
 
         for customer in customers:
 
-            row = ctk.CTkLabel(
-                self.customer_list,
-                text=f"{customer[0]:<5}{customer[1]:<25}{customer[2]}",
-                font=("Courier New", 15)
-            )
+            row = ctk.CTkFrame(self.customer_list)
 
-            row.pack(
-                anchor="w",
-                padx=10,
-                pady=2
-            )
+            row.pack(fill="x", padx=5, pady=3)
+
+            ctk.CTkLabel(
+                row,
+                text=str(customer[0]),
+                width=60
+            ).grid(row=0, column=0)
+
+            ctk.CTkLabel(
+                row,
+                text=customer[1],
+                width=250,
+                anchor="w"
+            ).grid(row=0, column=1)
+
+            ctk.CTkLabel(
+                row,
+                text=customer[2],
+                width=180
+            ).grid(row=0, column=2)
