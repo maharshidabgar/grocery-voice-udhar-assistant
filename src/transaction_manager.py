@@ -136,7 +136,7 @@ class TransactionManager:
         )
 
     # ---------------------------------
-    # Today's Report
+    # Today's Transactions
     # ---------------------------------
 
     def get_today_transactions(self):
@@ -144,15 +144,20 @@ class TransactionManager:
         return self.db.fetchall(
             """
             SELECT
-                customer_id,
-                transaction_type,
-                amount,
-                item_name,
-                note,
-                created_at
+                customers.name,
+                transactions.transaction_type,
+                transactions.amount,
+                transactions.item_name,
+                transactions.note,
+                transactions.created_at
             FROM transactions
-            WHERE DATE(created_at) = DATE('now','localtime')
-            ORDER BY created_at
+
+            INNER JOIN customers
+            ON transactions.customer_id = customers.id
+
+            WHERE DATE(transactions.created_at)=DATE('now','localtime')
+
+            ORDER BY transactions.created_at DESC
             """
         )
 

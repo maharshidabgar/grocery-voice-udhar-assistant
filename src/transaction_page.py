@@ -34,7 +34,9 @@ class TransactionPage(ctk.CTkFrame):
             font=("Arial", 28, "bold")
         )
 
-        heading.pack(pady=(10, 20))
+        heading.pack(
+            pady=(10, 20)
+        )
 
         # Form
 
@@ -195,7 +197,8 @@ class TransactionPage(ctk.CTkFrame):
         self.save_button = ctk.CTkButton(
             form,
             text="💾 Save Transaction",
-            width=180
+            width=180,
+            command=self.save_transaction
         )
 
         self.save_button.grid(
@@ -221,13 +224,7 @@ class TransactionPage(ctk.CTkFrame):
             pady=20
         )
 
-        ctk.CTkLabel(
-            self.transaction_list,
-            text="Today's Transactions (Coming Next Step)",
-            font=("Arial", 18)
-        ).pack(
-            pady=20
-        )
+        self.load_today_transactions()
 
         self.load_customers()
 
@@ -266,3 +263,157 @@ class TransactionPage(ctk.CTkFrame):
         self.customer_option.set(
             customer_names[0]
         )
+
+    # ---------------------------------------
+    # Get Selected Customer ID
+    # ---------------------------------------
+
+    def get_selected_customer_id(self):
+
+        selected_name = self.customer_option.get()
+
+        customer = self.customer_manager.find_customer_by_name(
+            selected_name
+        )
+
+        if customer:
+
+            return customer[0]
+
+        return None
+
+    # ---------------------------------------
+    # Save Transaction
+    # ---------------------------------------
+
+    def save_transaction(self):
+
+        try:
+
+            customer_id = self.get_selected_customer_id()
+
+            amount = float(
+                self.amount_entry.get().strip()
+            )
+
+            item_name = self.item_entry.get().strip()
+
+            note = self.note_entry.get().strip()
+
+            transaction_type = self.transaction_type.get()
+
+            if transaction_type == "UDHAR":
+
+                message = self.transaction_manager.add_udhar(
+                    customer_id,
+                    amount,
+                    item_name,
+                    note
+                )
+
+            else:
+
+                message = self.transaction_manager.add_payment(
+                    customer_id,
+                    amount,
+                    note
+                )
+
+            print(message)
+
+            self.amount_entry.delete(0, "end")
+            self.item_entry.delete(0, "end")
+            self.note_entry.delete(0, "end")
+
+            self.transaction_type.set("UDHAR")
+
+            self.load_today_transactions()
+
+        except Exception as e:
+
+            print(e)
+
+    # ---------------------------------------
+    # Today's Transactions
+    # ---------------------------------------
+
+    def load_today_transactions(self):
+
+        for widget in self.transaction_list.winfo_children():
+
+            widget.destroy()
+
+        transactions = self.transaction_manager.get_today_transactions()
+
+        if not transactions:
+
+            ctk.CTkLabel(
+                self.transaction_list,
+                text="No transactions today.",
+                font=("Arial", 16)
+            ).pack(
+                pady=20
+            )
+
+            return
+
+        # Header
+
+        header = ctk.CTkFrame(
+            self.transaction_list
+        )
+
+        header.pack(
+            fill="x",
+            padx=5,
+            pady=5
+        )
+
+        headings = [
+            "Customer",
+            "Type",
+            "Amount",
+            "Item",
+            "Note",
+            "Time"
+        ]
+
+        for col, title in enumerate(headings):
+
+            ctk.CTkLabel(
+                header,
+                text=title,
+                width=120,
+                font=("Arial", 14, "bold")
+            ).grid(
+                row=0,
+                column=col,
+                padx=5
+            )
+
+        # Data
+
+        for transaction in transactions:
+
+            row = ctk.CTkFrame(
+                self.transaction_list
+            )
+
+            row.pack(
+                fill="x",
+                padx=5,
+                pady=2
+            )
+
+            for col, value in enumerate(transaction):
+
+                ctk.CTkLabel(
+                    row,
+                    text=str(value),
+                    width=120,
+                    anchor="w"
+                ).grid(
+                    row=0,
+                    column=col,
+                    padx=5
+                )
