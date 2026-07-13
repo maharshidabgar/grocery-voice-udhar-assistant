@@ -18,6 +18,10 @@ class CustomerPage(ctk.CTkFrame):
 
         self.create_widgets()
 
+    # ---------------------------------------
+    # Create Widgets
+    # ---------------------------------------
+
     def create_widgets(self):
 
         # Heading
@@ -36,7 +40,7 @@ class CustomerPage(ctk.CTkFrame):
 
         form.pack(fill="x", padx=20)
 
-        # Name
+        # Customer Name
 
         ctk.CTkLabel(
             form,
@@ -61,7 +65,7 @@ class CustomerPage(ctk.CTkFrame):
             pady=10
         )
 
-        # Mobile
+        # Mobile Number
 
         ctk.CTkLabel(
             form,
@@ -86,7 +90,7 @@ class CustomerPage(ctk.CTkFrame):
             pady=10
         )
 
-        # Add Button
+        # Add Customer Button
 
         self.add_button = ctk.CTkButton(
             form,
@@ -101,15 +105,24 @@ class CustomerPage(ctk.CTkFrame):
             pady=20
         )
 
-        # Placeholder
+        # ---------------------------------------
+        # Customer List
+        # ---------------------------------------
 
-        placeholder = ctk.CTkLabel(
+        self.customer_list = ctk.CTkScrollableFrame(
             self,
-            text="Customer Table (Coming Next Step)",
-            font=("Arial", 18)
+            width=700,
+            height=300
         )
 
-        placeholder.pack(pady=40)
+        self.customer_list.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
+        )
+
+        self.load_customers()
 
     # ---------------------------------------
     # Add Customer
@@ -132,6 +145,55 @@ class CustomerPage(ctk.CTkFrame):
             self.name_entry.delete(0, "end")
             self.mobile_entry.delete(0, "end")
 
+            self.load_customers()
+
         except Exception as e:
 
             print(e)
+
+    # ---------------------------------------
+    # Load Customers
+    # ---------------------------------------
+
+    def load_customers(self):
+
+        for widget in self.customer_list.winfo_children():
+            widget.destroy()
+
+        customers = self.manager.get_all_customers()
+
+        if not customers:
+
+            ctk.CTkLabel(
+                self.customer_list,
+                text="No customers found.",
+                font=("Arial", 16)
+            ).pack(pady=20)
+
+            return
+
+        header = ctk.CTkLabel(
+            self.customer_list,
+            text=f"{'ID':<5}{'Name':<25}{'Mobile'}",
+            font=("Courier New", 16, "bold")
+        )
+
+        header.pack(
+            anchor="w",
+            padx=10,
+            pady=(10, 5)
+        )
+
+        for customer in customers:
+
+            row = ctk.CTkLabel(
+                self.customer_list,
+                text=f"{customer[0]:<5}{customer[1]:<25}{customer[2]}",
+                font=("Courier New", 15)
+            )
+
+            row.pack(
+                anchor="w",
+                padx=10,
+                pady=2
+            )
