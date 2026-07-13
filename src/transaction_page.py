@@ -1,10 +1,15 @@
 import customtkinter as ctk
+from customer_manager import CustomerManager
+from transaction_manager import TransactionManager
 
 
 class TransactionPage(ctk.CTkFrame):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.customer_manager = CustomerManager()
+        self.transaction_manager = TransactionManager()
 
         self.pack(
             fill="both",
@@ -55,7 +60,7 @@ class TransactionPage(ctk.CTkFrame):
 
         self.customer_option = ctk.CTkOptionMenu(
             form,
-            values=["Select Customer"]
+            values=[]
         )
 
         self.customer_option.grid(
@@ -222,4 +227,42 @@ class TransactionPage(ctk.CTkFrame):
             font=("Arial", 18)
         ).pack(
             pady=20
+        )
+
+        self.load_customers()
+
+    # ---------------------------------------
+    # Load Customers
+    # ---------------------------------------
+
+    def load_customers(self):
+
+        customers = self.customer_manager.get_all_customers()
+
+        if not customers:
+
+            self.customer_option.configure(
+                values=["No Customers"]
+            )
+
+            self.customer_option.set(
+                "No Customers"
+            )
+
+            return
+
+        customer_names = []
+
+        for customer in customers:
+
+            customer_names.append(
+                customer[1]
+            )
+
+        self.customer_option.configure(
+            values=customer_names
+        )
+
+        self.customer_option.set(
+            customer_names[0]
         )
