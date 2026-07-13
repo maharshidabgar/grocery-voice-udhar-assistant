@@ -270,6 +270,13 @@ class CustomerPage(ctk.CTkFrame):
             font=("Arial", 15, "bold")
         ).grid(row=0, column=2)
 
+        ctk.CTkLabel(
+            header,
+            text="Action",
+            width=120,
+            font=("Arial", 15, "bold")
+        ).grid(row=0, column=3)
+
         # Data
 
         for customer in customers:
@@ -301,6 +308,19 @@ class CustomerPage(ctk.CTkFrame):
                 width=180
             ).grid(row=0, column=2)
             
+            ctk.CTkButton(
+            row,
+            text="🗑 Delete",
+            width=100,
+            fg_color="red",
+            hover_color="#b71c1c",
+            command=lambda customer_id=customer[0]: self.delete_customer(customer_id)
+        ).grid(
+            row=0,
+            column=3,
+            padx=10
+        )
+            
     # ---------------------------------------
     # Search Customer
     # ---------------------------------------
@@ -322,3 +342,23 @@ class CustomerPage(ctk.CTkFrame):
         self.search_entry.delete(0, "end")
 
         self.load_customers()
+        
+    # ---------------------------------------
+    # Delete Customer
+    # ---------------------------------------
+
+    def delete_customer(self, customer_id):
+
+        try:
+
+            self.manager.delete_customer(customer_id)
+
+            print("Customer deleted successfully.")
+
+            self.load_customers(
+                self.search_entry.get().strip()
+            )
+
+        except Exception as e:
+
+            print(e)
