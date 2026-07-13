@@ -308,17 +308,32 @@ class CustomerPage(ctk.CTkFrame):
                 width=180
             ).grid(row=0, column=2)
             
-            ctk.CTkButton(
+        # Edit Button
+
+        ctk.CTkButton(
+            row,
+            text="✏ Edit",
+            width=80,
+            command=lambda customer=customer: self.edit_customer(customer)
+        ).grid(
+            row=0,
+            column=3,
+            padx=5
+        )
+
+        # Delete Button
+
+        ctk.CTkButton(
             row,
             text="🗑 Delete",
-            width=100,
+            width=90,
             fg_color="red",
             hover_color="#b71c1c",
             command=lambda customer_id=customer[0]: self.delete_customer(customer_id)
         ).grid(
             row=0,
-            column=3,
-            padx=10
+            column=4,
+            padx=5
         )
             
     # ---------------------------------------
@@ -358,6 +373,58 @@ class CustomerPage(ctk.CTkFrame):
             self.load_customers(
                 self.search_entry.get().strip()
             )
+
+        except Exception as e:
+
+            print(e)
+                
+    # ---------------------------------------
+    # Edit Customer
+    # ---------------------------------------
+
+    def edit_customer(self, customer):
+
+        self.selected_customer_id = customer[0]
+
+        self.name_entry.delete(0, "end")
+        self.mobile_entry.delete(0, "end")
+
+        self.name_entry.insert(0, customer[1])
+        self.mobile_entry.insert(0, customer[2])
+
+        self.add_button.configure(
+            text="💾 Update Customer",
+            command=self.update_customer
+    )
+        
+    # ---------------------------------------
+    # Update Customer
+    # ---------------------------------------
+
+    def update_customer(self):
+
+        name = self.name_entry.get().strip()
+        mobile = self.mobile_entry.get().strip()
+
+        try:
+
+            message = self.manager.update_customer(
+                self.selected_customer_id,
+                name,
+                mobile
+            )
+
+            print(message)
+
+            self.name_entry.delete(0, "end")
+            self.mobile_entry.delete(0, "end")
+
+            self.add_button.configure(
+                text="➕ Add Customer",
+                command=self.add_customer
+            )
+
+            self.load_customers()
 
         except Exception as e:
 
