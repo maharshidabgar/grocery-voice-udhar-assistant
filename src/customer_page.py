@@ -106,6 +106,43 @@ class CustomerPage(ctk.CTkFrame):
         )
 
         # ---------------------------------------
+        # Search Customer
+        # ---------------------------------------
+
+        search_frame = ctk.CTkFrame(self)
+
+        search_frame.pack(
+            fill="x",
+            padx=20,
+            pady=(10, 5)
+        )
+
+        ctk.CTkLabel(
+            search_frame,
+            text="🔍 Search Customer",
+            font=("Arial", 15, "bold")
+        ).pack(
+            side="left",
+            padx=10
+        )
+
+        self.search_entry = ctk.CTkEntry(
+            search_frame,
+            width=300,
+            placeholder_text="Search by customer name..."
+        )
+
+        self.search_entry.pack(
+            side="left",
+            padx=10
+        )
+
+        self.search_entry.bind(
+            "<KeyRelease>",
+            self.search_customer
+        )
+        
+        # ---------------------------------------
         # Customer List
         # ---------------------------------------
 
@@ -155,12 +192,19 @@ class CustomerPage(ctk.CTkFrame):
     # Load Customers
     # ---------------------------------------
 
-    def load_customers(self):
+    def load_customers(self, keyword=""):
 
         for widget in self.customer_list.winfo_children():
             widget.destroy()
 
         customers = self.manager.get_all_customers()
+
+        if keyword:
+            customers = [
+                customer
+                for customer in customers
+                if keyword.lower() in customer[1].lower()
+            ]
 
         if not customers:
 
@@ -176,7 +220,11 @@ class CustomerPage(ctk.CTkFrame):
 
         header = ctk.CTkFrame(self.customer_list)
 
-        header.pack(fill="x", padx=5, pady=5)
+        header.pack(
+            fill="x",
+            padx=5,
+            pady=5
+        )
 
         ctk.CTkLabel(
             header,
@@ -205,7 +253,11 @@ class CustomerPage(ctk.CTkFrame):
 
             row = ctk.CTkFrame(self.customer_list)
 
-            row.pack(fill="x", padx=5, pady=3)
+            row.pack(
+                fill="x",
+                padx=5,
+                pady=3
+            )
 
             ctk.CTkLabel(
                 row,
@@ -225,3 +277,13 @@ class CustomerPage(ctk.CTkFrame):
                 text=customer[2],
                 width=180
             ).grid(row=0, column=2)
+            
+    # ---------------------------------------
+    # Search Customer
+    # ---------------------------------------
+
+    def search_customer(self, event=None):
+
+        keyword = self.search_entry.get().strip()
+
+        self.load_customers(keyword)
