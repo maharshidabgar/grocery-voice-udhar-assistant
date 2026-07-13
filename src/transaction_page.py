@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from customer_manager import CustomerManager
 from transaction_manager import TransactionManager
-
+from voice_assistant import VoiceAssistant
+from voice_parser import VoiceParser
 
 class TransactionPage(ctk.CTkFrame):
 
@@ -10,6 +11,9 @@ class TransactionPage(ctk.CTkFrame):
 
         self.customer_manager = CustomerManager()
         self.transaction_manager = TransactionManager()
+
+        self.voice = VoiceAssistant()
+        self.parser = VoiceParser()
 
         self.pack(
             fill="both",
@@ -207,6 +211,19 @@ class TransactionPage(ctk.CTkFrame):
             pady=20
         )
 
+        self.voice_button = ctk.CTkButton(
+            form,
+            text="🎤 Voice Input",
+            width=180,
+            command=self.voice_transaction
+        )
+
+        self.voice_button.grid(
+            row=6,
+            column=1,
+            pady=10
+        )
+
         # ---------------------------------------
         # Transaction List
         # ---------------------------------------
@@ -333,6 +350,67 @@ class TransactionPage(ctk.CTkFrame):
 
             print(e)
 
+
+    # ---------------------------------------
+    # Voice Transaction
+    # ---------------------------------------
+
+    def voice_transaction(self):
+
+        text = self.voice.listen()
+
+        if not text:
+
+            print("No Voice Detected")
+
+            return
+
+        print(text)
+
+        data = self.parser.parse(text)
+
+        print(data)
+
+        if not data:
+            return
+
+        # Customer
+        if data["customer"]:
+
+            self.customer_option.set(
+                data["customer"]
+            )
+
+        # Amount
+        if data["amount"]:
+
+            self.amount_entry.delete(0, "end")
+
+            self.amount_entry.insert(
+                0,
+                str(data["amount"])
+            )
+
+        # Item
+        self.item_entry.delete(0, "end")
+
+        if data["item"]:
+
+            self.item_entry.insert(
+                0,
+                data["item"]
+            )
+
+        # Transaction Type
+        if data["type"]:
+
+            self.transaction_type.set(
+                data["type"]
+            )
+
+        # Auto Save
+        self.save_transaction()
+        
     # ---------------------------------------
     # Today's Transactions
     # ---------------------------------------
