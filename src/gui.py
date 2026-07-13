@@ -3,6 +3,7 @@ from dashboard import Dashboard
 from customer_page import CustomerPage
 from transaction_page import TransactionPage
 from ledger_page import LedgerPage
+from report_page import ReportPage
 
 # Theme
 ctk.set_appearance_mode("Light")
@@ -62,7 +63,7 @@ class GroceryGUI(ctk.CTk):
 
             ("📒 Ledger", self.show_ledger),
 
-            ("📊 Reports", self.not_ready),
+            ("📊 Reports", self.show_reports),
 
             ("⚙ Settings", self.not_ready)
 
@@ -170,6 +171,23 @@ class GroceryGUI(ctk.CTk):
         self.clear_content()
 
         page = LedgerPage(self.content)
+
+        page.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
+        )
+
+    # ----------------------------------------
+    # Reports
+    # ----------------------------------------
+
+    def show_reports(self):
+
+        self.clear_content()
+
+        page = ReportPage(self.content)
 
         page.pack(
             fill="both",
