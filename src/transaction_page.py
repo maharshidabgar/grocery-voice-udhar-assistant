@@ -482,9 +482,27 @@ class TransactionPage(ctk.CTkFrame):
 
             else:
 
-                print("Customer Not Found")
+                suggestions = self.customer_manager.suggest_customers(
+                    data["customer"]
+                )
 
-                self.tts.speak("Customer not found")
+                if suggestions:
+
+                    print("Did you mean:")
+
+                    for customer in suggestions:
+
+                        print(customer[1])
+
+                    self.tts.speak(
+                        f"{len(suggestions)} similar customer found."
+                    )
+
+                else:
+
+                    print("Customer Not Found")
+
+                    self.tts.speak("Customer not found.")
 
                 return
 

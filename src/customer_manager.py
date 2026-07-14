@@ -147,6 +147,36 @@ class CustomerManager:
                 return customer
 
         return None
+
+    # ---------------------------------------
+    # Suggest Similar Customers
+    # ---------------------------------------
+
+    def suggest_customers(self, voice_name):
+
+        if not voice_name:
+
+            return []
+
+        voice_name = voice_name.lower().strip()
+
+        suggestions = []
+
+        customers = self.get_all_customers()
+
+        for customer in customers:
+
+            name = customer[1].lower()
+
+            if (
+                voice_name in name
+                or name.startswith(voice_name)
+                or voice_name.startswith(name)
+            ):
+
+                suggestions.append(customer)
+
+        return suggestions
     
     # ---------------------------------------
     # Update Customer
