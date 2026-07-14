@@ -162,6 +162,20 @@ class VoiceParser:
             "hajar": 1000
         }
 
+        # ------------------------------------
+        # Add Customer Keywords
+        # ------------------------------------
+
+        self.add_customer_keywords = [
+
+            "add customer",
+            "customer add",
+            "new customer",
+            "create customer",
+            "add",
+            "create"
+
+        ]
     # ------------------------------------
     # Detect Amount
     # ------------------------------------
@@ -342,6 +356,22 @@ class VoiceParser:
         return text.strip()
 
     # ------------------------------------
+    # Is Add Customer Command
+    # ------------------------------------
+
+    def is_add_customer(self, text):
+
+        text = text.lower()
+
+        for keyword in self.add_customer_keywords:
+
+            if keyword in text:
+
+                return True
+
+        return False
+
+    # ------------------------------------
     # Parse Voice Command
     # ------------------------------------
 
@@ -360,7 +390,10 @@ class VoiceParser:
             "item": "",
             "quantity": "",
             "original_text": text,
+            "add_customer": False,
         }
+
+        result["add_customer"] = self.is_add_customer(text)
 
         # -------------------------
         # Customer
