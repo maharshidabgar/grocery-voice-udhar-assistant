@@ -470,27 +470,21 @@ class TransactionPage(ctk.CTkFrame):
 
         if data["customer"]:
 
-            customers = self.customer_manager.get_all_customers()
+            customer = self.customer_manager.find_customer_by_voice_name(
+                data["customer"]
+            )
 
-            found = False
+            if customer:
 
-            for customer in customers:
+                self.customer_option.set(
+                    customer[1]
+                )
 
-                customer_name = customer[1]
-
-                if customer_name.lower().startswith(
-                    data["customer"].lower().split()[0]
-                ):
-
-                    self.customer_option.set(customer_name)
-
-                    found = True
-
-                    break
-
-            if not found:
+            else:
 
                 print("Customer Not Found")
+
+                self.tts.speak("Customer not found")
 
                 return
 

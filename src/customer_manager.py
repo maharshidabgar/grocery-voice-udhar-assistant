@@ -86,6 +86,69 @@ class CustomerManager:
         )
 
     # ---------------------------------------
+    # Find Customer By Voice Name
+    # ---------------------------------------
+
+    def find_customer_by_voice_name(self, voice_name):
+
+        if not voice_name:
+
+            return None
+
+        voice_name = voice_name.lower().strip()
+
+        # Common Gujarati suffixes
+        remove_words = [
+            "bhai",
+            "ben",
+            "kaka",
+            "kaki",
+            "dada",
+            "dadi",
+            "mama",
+            "mami",
+            "sir",
+            "ji",
+        ]
+
+        words = voice_name.split()
+
+        filtered = []
+
+        for word in words:
+
+            if word not in remove_words:
+
+                filtered.append(word)
+
+        clean_name = " ".join(filtered)
+
+        customers = self.get_all_customers()
+
+        # Exact Match
+        for customer in customers:
+
+            if customer[1].lower() == clean_name:
+
+                return customer
+
+        # Startswith Match
+        for customer in customers:
+
+            if customer[1].lower().startswith(clean_name):
+
+                return customer
+
+        # Contains Match
+        for customer in customers:
+
+            if clean_name in customer[1].lower():
+
+                return customer
+
+        return None
+    
+    # ---------------------------------------
     # Update Customer
     # ---------------------------------------
 
