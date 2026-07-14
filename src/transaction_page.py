@@ -364,40 +364,55 @@ class TransactionPage(ctk.CTkFrame):
 
             customer_name = self.customer_option.get()
 
+            item_name = self.tts.gujarati_item(item_name)
+
             if transaction_type == "UDHAR":
 
                 if amount == 1:
 
-                    item_name = self.tts.gujarati_item(item_name)
+                    speech = (
+                        f"{customer_name} ભાઈ, "
+                        f"{item_name} નો 1 રૂપિયો "
+                        f"બાકી લખાઈ ગયો."
+                    )
+
+                elif amount == 2:
 
                     speech = (
-                        f"{customer_name} ના "
-                        f"{item_name} નો "
-                        f"1 રૂપિયો બાકી."
+                        f"{customer_name} ભાઈ, "
+                        f"{item_name} ના 2 રૂપિયા "
+                        f"બાકી લખાઈ ગયા."
                     )
 
                 else:
 
                     speech = (
-                    f"{customer_name} ના "
-                    f"{item_name} ના "
-                    f"{int(amount)} રૂપિયા બાકી."
-                )
+                        f"{customer_name} ભાઈ, "
+                        f"{item_name} ના {int(amount)} રૂપિયા "
+                        f"બાકી લખાઈ ગયા."
+                    )
 
             else:
 
                 if amount == 1:
 
                     speech = (
-                        f"{customer_name} એ "
-                        f"1 રૂપિયો આપ્યો."
+                        f"{customer_name} ભાઈ, "
+                        f"1 રૂપિયો જમા થયો."
+                    )
+
+                elif amount == 2:
+
+                    speech = (
+                        f"{customer_name} ભાઈ, "
+                        f"2 રૂપિયા જમા થયા."
                     )
 
                 else:
 
                     speech = (
-                        f"{customer_name} એ "
-                        f"{int(amount)} રૂપિયા આપ્યા."
+                        f"{customer_name} ભાઈ, "
+                        f"{int(amount)} રૂપિયા જમા થયા."
                     )
 
             print(speech)
