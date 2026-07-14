@@ -307,34 +307,38 @@ class CustomerPage(ctk.CTkFrame):
                 text=customer[2],
                 width=180
             ).grid(row=0, column=2)
-            
-        # Edit Button
 
-        ctk.CTkButton(
-            row,
-            text="✏ Edit",
-            width=80,
-            command=lambda customer=customer: self.edit_customer(customer)
-        ).grid(
-            row=0,
-            column=3,
-            padx=5
-        )
+            # ------------------------
+            # Edit Button
+            # ------------------------
 
-        # Delete Button
+            ctk.CTkButton(
+                row,
+                text="✏ Edit",
+                width=80,
+                command=lambda c=customer: self.edit_customer(c)
+            ).grid(
+                row=0,
+                column=3,
+                padx=5
+            )
 
-        ctk.CTkButton(
-            row,
-            text="🗑 Delete",
-            width=90,
-            fg_color="red",
-            hover_color="#b71c1c",
-            command=lambda customer_id=customer[0]: self.delete_customer(customer_id)
-        ).grid(
-            row=0,
-            column=4,
-            padx=5
-        )
+            # ------------------------
+            # Delete Button
+            # ------------------------
+
+            ctk.CTkButton(
+                row,
+                text="🗑 Delete",
+                width=90,
+                fg_color="red",
+                hover_color="#b71c1c",
+                command=lambda cid=customer[0]: self.delete_customer(cid)
+            ).grid(
+                row=0,
+                column=4,
+                padx=5
+            )
             
     # ---------------------------------------
     # Search Customer
