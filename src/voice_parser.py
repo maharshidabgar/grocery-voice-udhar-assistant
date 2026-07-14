@@ -132,36 +132,86 @@ class VoiceParser:
             "dozen",
         ]
 
+        # ------------------------------------
+        # Gujarati Number Words
+        # ------------------------------------
+
+        self.number_map = {
+
+            "ek": 1,
+            "be": 2,
+            "tran": 3,
+            "char": 4,
+            "panch": 5,
+            "chha": 6,
+            "sat": 7,
+            "aath": 8,
+            "nav": 9,
+            "das": 10,
+
+            "so": 100,
+            "basso": 200,
+            "transo": 300,
+            "charso": 400,
+            "panchso": 500,
+            "chhaso": 600,
+            "satso": 700,
+            "aathso": 800,
+            "navso": 900,
+
+            "hajar": 1000
+        }
+
     # ------------------------------------
     # Detect Amount
     # ------------------------------------
 
     def find_amount(self, text):
 
+        text = text.lower()
+
+        # -----------------------------
+        # First try numeric values
+        # -----------------------------
+
         numbers = re.findall(r"\d+(?:\.\d+)?", text)
 
-        if not numbers:
+        if numbers:
 
-            return None
+            words = text.split()
 
-        words = text.lower().split()
+            amount = None
 
-        amount = None
+            for i, word in enumerate(words):
 
-        for i, word in enumerate(words):
+                if re.fullmatch(r"\d+(?:\.\d+)?", word):
 
-            if re.fullmatch(r"\d+(?:\.\d+)?", word):
+                    # Ignore quantity numbers
+                    if i + 1 < len(words):
 
-                # Quantity number?
-                if i + 1 < len(words):
+                        if words[i + 1] in self.quantity_words:
 
-                    if words[i + 1] in self.quantity_words:
+                            continue
 
-                        continue
+                    amount = float(word)
 
-                amount = float(word)
+            if amount is not None:
 
-        return amount
+                return amount
+
+        # -----------------------------
+        # Gujarati Number Words
+        # -----------------------------
+
+        words = text.split()
+
+        for word in words:
+
+            if word in self.number_map:
+
+                return float(self.number_map[word])
+
+        return None
 
     # ------------------------------------
     # Detect Transaction Type
