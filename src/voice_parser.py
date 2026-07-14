@@ -5,126 +5,295 @@ class VoiceParser:
 
     def __init__(self):
 
-        # -------------------------
-        # Grocery Item Dictionary
-        # -------------------------
+        # ------------------------------------
+        # Grocery Dictionary
+        # Spoken Name -> Standard Name
+        # ------------------------------------
 
         self.item_map = {
-
-            # Milk
+            # ---------------- Milk ----------------
             "milk": "Milk",
             "doodh": "Milk",
             "nani doodh": "Milk",
-            "taja": "Milk",
+            "moti doodh": "Milk",
             "gold": "Milk",
+            "gold milk": "Milk",
+            "amul gold": "Milk",
+            "taaza": "Milk",
+            "taja": "Milk",
             "dhabudu": "Milk",
-
-            # Rice
+            # ---------------- Rice ----------------
             "rice": "Rice",
             "chokha": "Rice",
             "basmati": "Rice",
-
-            # Wheat Flour
+            # ---------------- Flour ----------------
             "atta": "Atta",
             "lot": "Atta",
             "flour": "Atta",
+            "ghau no lot": "Atta",
             "chana no lot": "Atta",
-
-            # Oil
+            # ---------------- Oil ----------------
             "oil": "Oil",
             "tel": "Oil",
-
-            # Sugar
+            "fortune": "Oil",
+            "sunflower": "Oil",
+            # ---------------- Sugar ----------------
             "sugar": "Sugar",
             "khand": "Sugar",
-
-            # Salt
+            # ---------------- Salt ----------------
             "salt": "Salt",
             "mithu": "Salt",
             "namak": "Salt",
-
-            # Tea
+            # ---------------- Tea ----------------
             "tea": "Tea",
             "cha": "Tea",
             "cha ni bhuki": "Tea",
-
-            # Dal
+            # ---------------- Dal ----------------
             "dal": "Dal",
-            "lentils": "Dal",
-
-            # Ghee
+            "tuver": "Dal",
+            "moong": "Dal",
+            "masoor": "Dal",
+            # ---------------- Ghee ----------------
             "ghee": "Ghee",
-
-            # Butter
+            # ---------------- Butter ----------------
             "butter": "Butter",
             "makhan": "Butter",
-
-            # Soap
+            # ---------------- Soap ----------------
             "soap": "Soap",
             "sabun": "Soap",
-
-            # Biscuit
+            # ---------------- Biscuit ----------------
             "biscuit": "Biscuit",
-
-            # Chocolate
+            # ---------------- Chocolate ----------------
             "chocolate": "Chocolate",
-
-            # Shampoo
+            # ---------------- Shampoo ----------------
             "shampoo": "Shampoo",
-
-            # Toothpaste
-            "toothpaste": "Toothpaste",
+            # ---------------- Toothpaste ----------------
             "paste": "Toothpaste",
-
-            # Eggs
+            "toothpaste": "Toothpaste",
+            # ---------------- Eggs ----------------
             "egg": "Egg",
             "eggs": "Egg",
-
-            # Bread
+            "inda": "Egg",
+            # ---------------- Bread ----------------
             "bread": "Bread",
             "pav": "Bread",
-            # Maggi
-            "maggi": "Maggi"
-            
+            # ---------------- Maggi ----------------
+            "maggi": "Maggi",
         }
 
-        # -------------------------
-        # Transaction Keywords
-        # -------------------------
+        # ------------------------------------
+        # UDHAR Keywords
+        # ------------------------------------
 
         self.udhar_keywords = [
-
             "udhar",
-            "credit",
-            "borrow",
             "baki",
             "baaki",
+            "credit",
+            "borrow",
+            "khate",
+            "khata",
             "lakh",
             "likh",
-            "dejo",
-            "aapo",
-            "api de",
-            "khate",
-            "khata"
         ]
+
+        # ------------------------------------
+        # PAYMENT Keywords
+        # ------------------------------------
 
         self.payment_keywords = [
-
             "payment",
-            "paid",
             "pay",
-            "apya",
-            "api",
+            "paid",
             "jama",
+            "apya",
+            "aapya",
+            "apyo",
+            "api",
             "cash",
             "return",
-            "bharpai",
-            "aapya"
         ]
 
-    # ---------------------------------------
+        # ------------------------------------
+        # Gujarati Quantity Words
+        # ------------------------------------
+
+        self.quantity_words = [
+            "kilo",
+            "kg",
+            "gram",
+            "gm",
+            "liter",
+            "ltr",
+            "ml",
+            "piece",
+            "packet",
+            "pack",
+            "dozen",
+        ]
+
+    # ------------------------------------
+    # Detect Amount
+    # ------------------------------------
+
+    def find_amount(self, text):
+
+        numbers = re.findall(r"\d+(?:\.\d+)?", text)
+
+        if not numbers:
+
+            return None
+
+        words = text.lower().split()
+
+        amount = None
+
+        for i, word in enumerate(words):
+
+            if re.fullmatch(r"\d+(?:\.\d+)?", word):
+
+                # Quantity number?
+                if i + 1 < len(words):
+
+                    if words[i + 1] in self.quantity_words:
+
+                        continue
+
+                amount = float(word)
+
+        return amount
+
+    # ------------------------------------
+    # Detect Transaction Type
+    # ------------------------------------
+
+    def find_transaction_type(self, text):
+
+        text = text.lower()
+        
+        for keyword in self.payment_keywords:
+
+            if keyword in text:
+
+                return "PAYMENT"
+
+        for keyword in self.udhar_keywords:
+
+            if keyword in text:
+
+                return "UDHAR"
+
+        return None
+
+    # ------------------------------------
+    # Detect Grocery Item
+    # ------------------------------------
+
+    def find_item(self, text):
+
+        text = text.lower()
+
+        # Search longest phrases first
+        items = sorted(
+            self.item_map.keys(),
+            key=len,
+            reverse=True
+        )
+
+        for spoken_name in items:
+
+            if spoken_name in text:
+
+                return self.item_map[spoken_name]
+
+        return ""
+
+    # ------------------------------------
+    # Detect Customer
+    # ------------------------------------
+
+    def find_customer(self, text):
+
+        words = text.lower().split()
+
+        ignore_words = {
+            "na",
+            "no",
+            "ni",
+            "ne",
+            "e",
+            "rupiya",
+            "rupiyo",
+            "rupees",
+            "rupee",
+            "baki",
+            "baaki",
+            "udhar",
+            "payment",
+            "pay",
+            "paid",
+            "jama",
+            "cash",
+            "apya",
+            "aapya",
+            "apyo",
+            "api",
+            "kilo",
+            "kg",
+            "gram",
+            "gm",
+            "liter",
+            "ltr",
+            "ml",
+            "piece",
+            "packet",
+            "pack",
+            "dozen",
+            "noo",
+            "naa",
+            "nii",
+        }
+
+        customer = []
+
+        for word in words:
+
+            if word in ignore_words:
+                break
+
+            if word in self.item_map:
+                break
+
+            if re.fullmatch(r"\d+(\.\d+)?", word):
+                break
+
+            customer.append(word.capitalize())
+
+        return " ".join(customer)
+
+    # ------------------------------------
+    # Clean Text
+    # ------------------------------------
+
+    def clean_text(self, text):
+
+        text = text.lower()
+
+        text = text.replace(",", " ")
+
+        text = text.replace(".", " ")
+
+        text = text.replace("₹", " ")
+
+        text = text.replace("-", " ")
+
+        text = re.sub(r"\s+", " ", text)
+
+        return text.strip()
+
+    # ------------------------------------
     # Parse Voice Command
-    # ---------------------------------------
+    # ------------------------------------
 
     def parse(self, text):
 
@@ -132,77 +301,83 @@ class VoiceParser:
 
             return None
 
-        text = text.lower().strip()
+        text = self.clean_text(text)
 
         result = {
-
-            "customer": None,
-            "type": None,
+            "customer": "",
+            "type": "",
             "amount": None,
-            "item": ""
+            "item": "",
+            "quantity": "",
+            "original_text": text,
         }
 
-        # ---------------------------------------
+        # -------------------------
+        # Customer
+        # -------------------------
+
+        result["customer"] = self.find_customer(text)
+
+        # -------------------------
+        # Item
+        # -------------------------
+
+        result["item"] = self.find_item(text)
+
+        # -------------------------
         # Amount
-        # ---------------------------------------
+        # -------------------------
 
-        match = re.search(r"\d+(\.\d+)?", text)
+        result["amount"] = self.find_amount(text)
 
-        if match:
-
-            result["amount"] = float(match.group())
-
-        # ---------------------------------------
+        # -------------------------
         # Transaction Type
-        # ---------------------------------------
+        # -------------------------
 
-        if any(word in text for word in self.udhar_keywords):
+        result["type"] = self.find_transaction_type(text)
+
+        # -------------------------
+        # Smart Gujarati Detection
+        # -------------------------
+
+        if not result["type"]:
+
+            udhar_words = [
+                "baki",
+                "baaki",
+                "udhar",
+                "khate",
+                "khata",
+                "lakh",
+                "likh",
+            ]
+
+            payment_words = [
+                "payment",
+                "pay",
+                "paid",
+                "jama",
+                "cash",
+                "apya",
+                "aapya",
+                "apyo",
+                "api",
+            ]
+
+            if any(word in text for word in udhar_words):
+
+                result["type"] = "UDHAR"
+
+            elif any(word in text for word in payment_words):
+
+                result["type"] = "PAYMENT"
+
+        # -------------------------
+        # Default Transaction
+        # -------------------------
+
+        if not result["type"]:
 
             result["type"] = "UDHAR"
 
-        elif any(word in text for word in self.payment_keywords):
-
-            result["type"] = "PAYMENT"
-
-        # ---------------------------------------
-        # Customer Name
-        # ---------------------------------------
-
-        words = text.split()
-
-        if len(words) > 0:
-
-            result["customer"] = words[0].capitalize()
-
-        # ---------------------------------------
-        # Grocery Item
-        # ---------------------------------------
-
-        for word in words:
-
-            if word in self.item_map:
-
-                result["item"] = self.item_map[word]
-
-                break
-
         return result
-
-
-# ---------------------------------------
-# Testing
-# ---------------------------------------
-
-if __name__ == "__main__":
-
-    parser = VoiceParser()
-
-    while True:
-
-        text = input("\nSpeak : ")
-
-        if text.lower() == "exit":
-
-            break
-
-        print(parser.parse(text))

@@ -1,8 +1,12 @@
 import customtkinter as ctk
+
 from customer_manager import CustomerManager
 from transaction_manager import TransactionManager
+
 from voice_assistant import VoiceAssistant
 from voice_parser import VoiceParser
+
+from tts import TextToSpeech
 
 class TransactionPage(ctk.CTkFrame):
 
@@ -14,6 +18,8 @@ class TransactionPage(ctk.CTkFrame):
 
         self.voice = VoiceAssistant()
         self.parser = VoiceParser()
+        self.tts = TextToSpeech()
+    
 
         self.pack(
             fill="both",
@@ -309,15 +315,29 @@ class TransactionPage(ctk.CTkFrame):
 
             customer_id = self.get_selected_customer_id()
 
-            amount = float(
-                self.amount_entry.get().strip()
-            )
+            if customer_id is None:
+
+                print("Customer not selected.")
+                return
+
+            amount_text = self.amount_entry.get().strip()
+
+            if amount_text == "":
+
+                print("Amount is required.")
+                return
+
+            amount = float(amount_text)
 
             item_name = self.item_entry.get().strip()
 
             note = self.note_entry.get().strip()
 
             transaction_type = self.transaction_type.get()
+
+            # -------------------------
+            # Save Transaction
+            # -------------------------
 
             if transaction_type == "UDHAR":
 
@@ -338,17 +358,71 @@ class TransactionPage(ctk.CTkFrame):
 
             print(message)
 
+            # -------------------------
+            # Gujarati Voice Response
+            # -------------------------
+
+            customer_name = self.customer_option.get()
+
+            if transaction_type == "UDHAR":
+
+                if amount == 1:
+
+                    item_name = self.tts.gujarati_item(item_name)
+
+                    speech = (
+                        f"{customer_name} ના "
+                        f"{item_name} નો "
+                        f"1 રૂપિયો બાકી."
+                    )
+
+                else:
+
+                    speech = (
+                    f"{customer_name} ના "
+                    f"{item_name} ના "
+                    f"{int(amount)} રૂપિયા બાકી."
+                )
+
+            else:
+
+                if amount == 1:
+
+                    speech = (
+                        f"{customer_name} એ "
+                        f"1 રૂપિયો આપ્યો."
+                    )
+
+                else:
+
+                    speech = (
+                        f"{customer_name} એ "
+                        f"{int(amount)} રૂપિયા આપ્યા."
+                    )
+
+            print(speech)
+
+            self.tts.speak(speech)
+
+            # -------------------------
+            # Clear Form
+            # -------------------------
+
             self.amount_entry.delete(0, "end")
             self.item_entry.delete(0, "end")
             self.note_entry.delete(0, "end")
 
             self.transaction_type.set("UDHAR")
 
+            # -------------------------
+            # Refresh
+            # -------------------------
+
             self.load_today_transactions()
 
         except Exception as e:
 
-            print(e)
+            print("Save Transaction Error :", e)
 
 
     # ---------------------------------------
@@ -365,33 +439,63 @@ class TransactionPage(ctk.CTkFrame):
 
             return
 
-        print(text)
+        print("Voice :", text)
 
         data = self.parser.parse(text)
 
         print(data)
 
         if not data:
+
             return
 
-        # Customer
+        # ---------------------------------
+        # Customer Matching
+        # ---------------------------------
+
         if data["customer"]:
 
-            self.customer_option.set(
-                data["customer"]
-            )
+            customers = self.customer_manager.get_all_customers()
 
+            found = False
+
+            for customer in customers:
+
+                customer_name = customer[1]
+
+                if customer_name.lower().startswith(
+                    data["customer"].lower().split()[0]
+                ):
+
+                    self.customer_option.set(customer_name)
+
+                    found = True
+
+                    break
+
+            if not found:
+
+                print("Customer Not Found")
+
+                return
+
+        # ---------------------------------
         # Amount
-        if data["amount"]:
+        # ---------------------------------
 
-            self.amount_entry.delete(0, "end")
+        self.amount_entry.delete(0, "end")
+
+        if data["amount"] is not None:
 
             self.amount_entry.insert(
                 0,
-                str(data["amount"])
+                str(int(data["amount"]))
             )
 
+        # ---------------------------------
         # Item
+        # ---------------------------------
+
         self.item_entry.delete(0, "end")
 
         if data["item"]:
@@ -401,16 +505,22 @@ class TransactionPage(ctk.CTkFrame):
                 data["item"]
             )
 
+        # ---------------------------------
         # Transaction Type
+        # ---------------------------------
+
         if data["type"]:
 
             self.transaction_type.set(
                 data["type"]
             )
 
+        # ---------------------------------
         # Auto Save
+        # ---------------------------------
+
         self.save_transaction()
-        
+
     # ---------------------------------------
     # Today's Transactions
     # ---------------------------------------
