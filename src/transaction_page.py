@@ -512,203 +512,133 @@ class TransactionPage(ctk.CTkFrame):
         print("Type :", text)
 
         return text
+
     # ---------------------------------------
-    # Voice Transaction
+    # Voice Transaction Wizard
     # ---------------------------------------
 
     def voice_transaction(self):
 
-        text = self.voice.listen()
+        try:
 
-        if not text:
+            # -----------------------------
+            # Customer
+            # -----------------------------
 
-            print("No Voice Detected")
+            customer = self.voice_customer()
 
-            return
+            if not customer:
 
-        print("Voice :", text)
+                self.tts.speak("ગ્રાહક મળ્યો નથી.")
 
-        data = self.parser.parse(text)
+                return
 
-        print(data)
+            data = self.parser.parse(customer)
 
-        if not data:
+            print(data)
 
-            return
+            if data["customer"]:
 
-    
-        # ---------------------------------
-        # Smart Customer Matching
-        # ---------------------------------
+                customers = self.customer_manager.get_all_customers()
 
-        if data["customer"]:
+                customer_names = [
+                    c[1]
+                    for c in customers
+                ]
 
-            customers = self.customer_manager.get_all_customers()
+                match = get_close_matches(
+                    data["customer"],
+                    customer_names,
+                    n=1,
+                    cutoff=0.50
+                )
 
-            customer_names = [
-                customer[1]
-                for customer in customers
-            ]
+                if match:
 
-            # Exact Match
-
-            for name in customer_names:
-
-                if name.lower() == data["customer"].lower():
-
-                    self.customer_option.set(name)
-
-                    break
-
-            else:
-
-                # Startswith Match
-
-                for name in customer_names:
-
-                    if name.lower().startswith(
-                        data["customer"].lower()
-                    ):
-
-                        self.customer_option.set(name)
-
-                        break
+                    self.customer_option.set(
+                        match[0]
+                    )
 
                 else:
 
-                    # Fuzzy Match
-
-                    match = get_close_matches(
-                        data["customer"],
-                        customer_names,
-                        n=1,
-                        cutoff=0.55
+                    self.tts.speak(
+                        "ગ્રાહક મળ્યો નથી."
                     )
 
-                    if match:
+                    return
 
-                        self.customer_option.set(match[0])
+            # -----------------------------
+            # Item
+            # -----------------------------
 
-                        print(
-                            "Matched Customer :",
-                            match[0]
-                        )
+            item = self.voice_item()
 
-                    else:
+            if item:
 
-                        print("Customer Not Found")
+                data = self.parser.parse(item)
 
-                        if data.get("add_customer"):
+                self.item_entry.delete(0, "end")
 
-                            try:
+                if data["item"]:
 
-                                self.customer_manager.add_customer(
-                                    data["customer"]
-                                )
+                    self.item_entry.insert(
+                        0,
+                        data["item"]
+                    )
 
-                                self.customer_option.set(
-                                    data["customer"]
-                                )
+            # -----------------------------
+            # Amount
+            # -----------------------------
 
-                                print(
-                                    "New customer added."
-                                )
+            amount = self.voice_amount()
 
-                            except Exception:
+            if amount:
 
-                                pass
+                data = self.parser.parse(amount)
 
-                        else:
+                self.amount_entry.delete(
+                    0,
+                    "end"
+                )
 
-                            self.tts.speak(
-                                "Customer not found."
-                            )
+                if data["amount"]:
 
-                            return
+                    self.amount_entry.insert(
+                        0,
+                        str(int(data["amount"]))
+                    )
 
-        # ---------------------------------
-        # Amount
-        # ---------------------------------
+            # -----------------------------
+            # Transaction Type
+            # -----------------------------
 
-        self.amount_entry.delete(0, "end")
+            transaction = self.voice_type()
 
-        if data["amount"] is not None:
+            if transaction:
 
-            self.amount_entry.insert(
-                0,
-                str(int(data["amount"]))
+                data = self.parser.parse(
+                    transaction
+                )
+
+                if data["type"]:
+
+                    self.transaction_type.set(
+                        data["type"]
+                    )
+
+            # -----------------------------
+            # Save
+            # -----------------------------
+
+            self.save_transaction()
+
+        except Exception as e:
+
+            print(
+                "Voice Wizard Error :",
+                e
             )
-
-        # ---------------------------------
-        # Smart Item Matching
-        # ---------------------------------
-
-        self.item_entry.delete(0, "end")
-
-        if data["item"]:
-
-            self.item_entry.insert(
-                0,
-                data["item"]
-            )
-
-        else:
-
-            words = data["original_text"].split()
-
-            aliases = {
-
-                "dud": "Milk",
-                "dudh": "Milk",
-                "doodh": "Milk",
-                "dudno": "Milk",
-
-                "tel": "Oil",
-                "tail": "Oil",
-
-                "lot": "Atta",
-                "atta": "Atta",
-
-                "chokha": "Rice",
-
-                "cha": "Tea",
-
-                "maggi": "Maggi",
-
-                "salt": "Salt",
-                "mithu": "Salt",
-
-                "khand": "Sugar",
-
-            }
-
-            for word in words:
-
-                if word in aliases:
-
-                        self.item_entry.insert(
-                                0,
-                                aliases[word]
-                            )
-
-                        break
-
-        # ---------------------------------
-        # Transaction Type
-        # ---------------------------------
-
-        if data["type"]:
-
-            self.transaction_type.set(
-                data["type"]
-            )
-
-        # ---------------------------------
-        # Auto Save
-        # ---------------------------------
-
-        self.save_transaction()
-
+    
     # ---------------------------------------
     # Today's Transactions
     # ---------------------------------------
