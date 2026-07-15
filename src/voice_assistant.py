@@ -24,7 +24,7 @@ class VoiceAssistant:
         try:
 
             sample_rate = 16000
-            duration = 8
+            duration = 4
 
             print("🎤 Speak now...")
 
@@ -52,8 +52,11 @@ class VoiceAssistant:
 
             result = self.model.transcribe(
                 temp_file,
+                language="en",
+                task="transcribe",
                 fp16=False,
-                task="transcribe"
+                temperature=0,
+                condition_on_previous_text=False
             )
 
             text = result["text"].strip()
@@ -61,7 +64,7 @@ class VoiceAssistant:
             print("Detected Language :", result.get("language"))
 
             print("Original Text :", text)
-            
+
             return text.lower()
 
         except Exception as e:

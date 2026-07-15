@@ -1,5 +1,5 @@
 import re
-
+from difflib import get_close_matches
 
 class VoiceParser:
 
@@ -187,6 +187,44 @@ class VoiceParser:
             "nav": "9",
             "das": "10",
 
+        }
+
+        # ------------------------------------
+        # Customer Alias Dictionary
+        # ------------------------------------
+
+        self.customer_alias = {
+
+            # Ramesh
+            "rames": "Ramesh",
+            "rameh": "Ramesh",
+            "ramehs": "Ramesh",
+            "ramesh": "Ramesh",
+
+            # Jenam
+            "janam": "Jenam",
+            "jenam": "Jenam",
+            "jenem": "Jenam",
+            "jena": "Jenam",
+            "janem": "Jenam",
+
+            # Ram Bhai
+            "rambhai": "Ram Bhai",
+            "rambhai": "Ram Bhai",
+            "ram": "Ram Bhai",
+
+            # Ikbal
+            "ikbal": "Ikbal",
+            "iqbal": "Ikbal",
+            "ekbal": "Ikbal",
+
+            # Hetal
+            "hetal": "Hetal",
+
+            # Atulgiri
+            "atul": "Atulgiri",
+            "atulgiri": "Atulgiri",
+            "atulgiri": "Atulgiri",
         }
 
         # ------------------------------------
@@ -441,6 +479,23 @@ class VoiceParser:
                 break
 
             customer.append(word.capitalize())
+
+        name = " ".join(customer).lower().strip()
+
+        if name in self.customer_alias:
+
+            return self.customer_alias[name]
+
+        match = get_close_matches(
+            name,
+            self.customer_alias.keys(),
+            n=1,
+            cutoff=0.65
+        )
+
+        if match:
+
+            return self.customer_alias[match[0]]
 
         return " ".join(customer)
 
