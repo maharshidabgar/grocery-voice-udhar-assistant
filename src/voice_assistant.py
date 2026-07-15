@@ -1,64 +1,80 @@
-import speech_recognition as sr
+import os
+import tempfile
+import whisper
+import sounddevice as sd
+import soundfile as sf
 
 
 class VoiceAssistant:
 
     def __init__(self):
 
-        self.recognizer = sr.Recognizer()
+        print("Loading Whisper Model...")
 
-        self.recognizer.energy_threshold = 300
-        self.recognizer.dynamic_energy_threshold = True
-        self.recognizer.pause_threshold = 0.8
+        # tiny = Fast
+        # base = Better Accuracy
+        self.model = whisper.load_model("base")
+
+        print("Whisper Ready ✅")
 
     def listen(self):
 
+        temp_file = None
+
         try:
 
-            with sr.Microphone() as source:
+            sample_rate = 16000
+            duration = 8
 
-                print("🎤 Listening...")
+            print("🎤 Speak now...")
 
-                self.recognizer.adjust_for_ambient_noise(
-                    source,
-                    duration=2
-                )
-
-                audio = self.recognizer.listen(
-                    source,
-                    timeout=8,
-                    phrase_time_limit=10
-                )
-
-            text = self.recognizer.recognize_google(
-                audio,
-                language="en-IN"
+            audio = sd.rec(
+                int(sample_rate * duration),
+                samplerate=sample_rate,
+                channels=1,
+                dtype="float32"
             )
 
-            print("You said :", text)
+            sd.wait()
 
+            with tempfile.NamedTemporaryFile(
+                suffix=".wav",
+                delete=False
+            ) as f:
+
+                temp_file = f.name
+
+            sf.write(
+                temp_file,
+                audio,
+                sample_rate
+            )
+
+            result = self.model.transcribe(
+                temp_file,
+                fp16=False,
+                task="transcribe"
+            )
+
+            text = result["text"].strip()
+
+            print("Detected Language :", result.get("language"))
+
+            print("Original Text :", text)
+            
             return text.lower()
-
-        except sr.WaitTimeoutError:
-
-            print("No speech detected.")
-
-            return None
-
-        except sr.UnknownValueError:
-
-            print("Could not understand voice.")
-
-            return None
-
-        except sr.RequestError as e:
-
-            print("Speech Recognition Error :", e)
-
-            return None
 
         except Exception as e:
 
             print("Voice Error :", e)
 
             return None
+
+        finally:
+
+            if temp_file and os.path.exists(temp_file):
+
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass

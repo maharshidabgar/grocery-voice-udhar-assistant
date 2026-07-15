@@ -14,32 +14,57 @@ class VoiceParser:
             # ---------------- Milk ----------------
             "milk": "Milk",
             "doodh": "Milk",
+            "doodhna": "Milk",
+            "doodhno": "Milk",
+            "doodh ni batli": "Milk",
+            "dood": "Milk",
+            "doodna": "Milk",
+            "doodno": "Milk",
+            "dud": "Milk",
+            "dudno": "Milk",
+            "dudna": "Milk",
+            "dudhna": "Milk",
+            "dudhno": "Milk",
             "nani doodh": "Milk",
+            "nani doodhna": "Milk",
             "moti doodh": "Milk",
-            "gold": "Milk",
+            "moti doodhna": "Milk",
+            "goldna": "Milk",
             "gold milk": "Milk",
             "amul gold": "Milk",
-            "taaza": "Milk",
+            "amul goldna": "Milk",
+            "taajana": "Milk",
+            "taazana": "Milk",
             "taja": "Milk",
             "dhabudu": "Milk",
             # ---------------- Rice ----------------
             "rice": "Rice",
             "chokha": "Rice",
+            "bhatnachokha": "Rice",
+            "khichdinachokha": "Rice",
+            "chokhana": "Rice",
             "basmati": "Rice",
             # ---------------- Flour ----------------
             "atta": "Atta",
             "lot": "Atta",
+            "lotna": "Atta",
             "flour": "Atta",
             "ghau no lot": "Atta",
+            "ghau no lotna": "Atta",
             "chana no lot": "Atta",
+            "chana no lotna": "Atta",
+            "besan": "Atta",
             # ---------------- Oil ----------------
             "oil": "Oil",
             "tel": "Oil",
+            "telno": "Oil",
+            "telna": "Oil",
             "fortune": "Oil",
             "sunflower": "Oil",
             # ---------------- Sugar ----------------
             "sugar": "Sugar",
             "khand": "Sugar",
+            "khandna": "Sugar",
             # ---------------- Salt ----------------
             "salt": "Salt",
             "mithu": "Salt",
@@ -47,29 +72,39 @@ class VoiceParser:
             # ---------------- Tea ----------------
             "tea": "Tea",
             "cha": "Tea",
+            "chana": "Tea",
+            "cha": "Tea",
             "cha ni bhuki": "Tea",
             # ---------------- Dal ----------------
             "dal": "Dal",
+            "dalna": "Dal",
             "tuver": "Dal",
+            "tuvernidal": "Dal",
             "moong": "Dal",
+            "magnidal": "Dal",
             "masoor": "Dal",
             # ---------------- Ghee ----------------
             "ghee": "Ghee",
             # ---------------- Butter ----------------
             "butter": "Butter",
             "makhan": "Butter",
+            "DahiNikothli": "Butter",
             # ---------------- Soap ----------------
             "soap": "Soap",
             "sabun": "Soap",
+            "sabuna": "Soap",
             # ---------------- Biscuit ----------------
             "biscuit": "Biscuit",
+            "bikit": "Biscuit",
             # ---------------- Chocolate ----------------
             "chocolate": "Chocolate",
+            "soklate": "Chocolate",
             # ---------------- Shampoo ----------------
             "shampoo": "Shampoo",
             # ---------------- Toothpaste ----------------
             "paste": "Toothpaste",
             "toothpaste": "Toothpaste",
+            "toob": "Toothpaste",
             # ---------------- Eggs ----------------
             "egg": "Egg",
             "eggs": "Egg",
@@ -77,8 +112,81 @@ class VoiceParser:
             # ---------------- Bread ----------------
             "bread": "Bread",
             "pav": "Bread",
+            "pavpatti": "Bread",
+            "khari": "Bread",
             # ---------------- Maggi ----------------
             "maggi": "Maggi",
+            "pasta": "Maggi",
+            "noodles": "Maggi",
+        }
+
+        # ------------------------------------
+        # Voice Correction Dictionary
+        # ------------------------------------
+
+        self.voice_alias = {
+
+            # ---------------- Milk ----------------
+
+            "dud": "doodh",
+            "dudh": "doodh",
+            "dood": "doodh",
+            "dudh": "doodh",
+            "dudno": "doodh",
+            "dudhno": "doodh",
+            "dudhna": "doodh",
+            "doodhno": "doodh",
+            "doodhna": "doodh",
+            "milk": "doodh",
+
+            # ---------------- Oil ----------------
+
+            "tail": "tel",
+            "telno": "tel",
+            "telna": "tel",
+            "oil": "tel",
+
+            # ---------------- Rice ----------------
+
+            "chokhano": "chokha",
+            "chokhana": "chokha",
+            "rice": "chokha",
+
+            # ---------------- Flour ----------------
+
+            "lotno": "lot",
+            "lotna": "lot",
+            "atta": "lot",
+            "flour": "lot",
+
+            # ---------------- Tea ----------------
+
+            "chaano": "cha",
+            "chano": "cha",
+            "tea": "cha",
+
+            # ---------------- Rupees ----------------
+
+            "rs": "rupiya",
+            "rupee": "rupiya",
+            "rupees": "rupiya",
+            "rupio": "rupiya",
+            "rupiyo": "rupiya",
+            "rupaiya": "rupiya",
+
+            # ---------------- Gujarati Numbers ----------------
+
+            "ek": "1",
+            "be": "2",
+            "tran": "3",
+            "char": "4",
+            "panch": "5",
+            "chh": "6",
+            "sat": "7",
+            "aath": "8",
+            "nav": "9",
+            "das": "10",
+
         }
 
         # ------------------------------------
@@ -176,6 +284,7 @@ class VoiceParser:
             "create"
 
         ]
+
     # ------------------------------------
     # Detect Amount
     # ------------------------------------
@@ -341,17 +450,30 @@ class VoiceParser:
 
     def clean_text(self, text):
 
-        text = text.lower()
-
-        text = text.replace(",", " ")
-
-        text = text.replace(".", " ")
-
-        text = text.replace("₹", " ")
-
-        text = text.replace("-", " ")
+        text = text.replace("ek", "1")
+        text = text.replace("be", "2")
+        text = text.replace("tran", "3")
+        text = text.replace("char", "4")
+        text = text.replace("panch", "5")
+        text = text.replace("chh", "6")
+        text = text.replace("sat", "7")
+        text = text.replace("aath", "8")
+        text = text.replace("nav", "9")
+        text = text.replace("das", "10")
 
         text = re.sub(r"\s+", " ", text)
+
+        words = text.split()
+
+        new_words = []
+
+        for word in words:
+
+            new_words.append(
+                self.voice_alias.get(word, word)
+            )
+
+        text = " ".join(new_words)
 
         return text.strip()
 
