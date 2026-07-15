@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from difflib import get_close_matches
 
 from customer_manager import CustomerManager
 from transaction_manager import TransactionManager
@@ -464,47 +465,95 @@ class TransactionPage(ctk.CTkFrame):
 
             return
 
+    
         # ---------------------------------
-        # Customer Matching
+        # Smart Customer Matching
         # ---------------------------------
 
         if data["customer"]:
 
-            customer = self.customer_manager.find_customer_by_voice_name(
-                data["customer"]
-            )
+            customers = self.customer_manager.get_all_customers()
 
-            if customer:
+            customer_names = [
+                customer[1]
+                for customer in customers
+            ]
 
-                self.customer_option.set(
-                    customer[1]
-                )
+            # Exact Match
+
+            for name in customer_names:
+
+                if name.lower() == data["customer"].lower():
+
+                    self.customer_option.set(name)
+
+                    break
 
             else:
 
-                suggestions = self.customer_manager.suggest_customers(
-                    data["customer"]
-                )
+                # Startswith Match
 
-                if suggestions:
+                for name in customer_names:
 
-                    print("Did you mean:")
+                    if name.lower().startswith(
+                        data["customer"].lower()
+                    ):
 
-                    for customer in suggestions:
+                        self.customer_option.set(name)
 
-                        print(customer[1])
-
-                    self.tts.speak(
-                        f"{len(suggestions)} similar customer found."
-                    )
+                        break
 
                 else:
 
-                    print("Customer Not Found")
+                    # Fuzzy Match
 
-                    self.tts.speak("Customer not found.")
+                    match = get_close_matches(
+                        data["customer"],
+                        customer_names,
+                        n=1,
+                        cutoff=0.55
+                    )
 
-                return
+                    if match:
+
+                        self.customer_option.set(match[0])
+
+                        print(
+                            "Matched Customer :",
+                            match[0]
+                        )
+
+                    else:
+
+                        print("Customer Not Found")
+
+                        if data.get("add_customer"):
+
+                            try:
+
+                                self.customer_manager.add_customer(
+                                    data["customer"]
+                                )
+
+                                self.customer_option.set(
+                                    data["customer"]
+                                )
+
+                                print(
+                                    "New customer added."
+                                )
+
+                            except Exception:
+
+                                pass
+
+                        else:
+
+                            self.tts.speak(
+                                "Customer not found."
+                            )
+
+                            return
 
         # ---------------------------------
         # Amount
@@ -520,7 +569,7 @@ class TransactionPage(ctk.CTkFrame):
             )
 
         # ---------------------------------
-        # Item
+        # Smart Item Matching
         # ---------------------------------
 
         self.item_entry.delete(0, "end")
@@ -531,6 +580,47 @@ class TransactionPage(ctk.CTkFrame):
                 0,
                 data["item"]
             )
+
+        else:
+
+            words = data["original_text"].split()
+
+            aliases = {
+
+                "dud": "Milk",
+                "dudh": "Milk",
+                "doodh": "Milk",
+                "dudno": "Milk",
+
+                "tel": "Oil",
+                "tail": "Oil",
+
+                "lot": "Atta",
+                "atta": "Atta",
+
+                "chokha": "Rice",
+
+                "cha": "Tea",
+
+                "maggi": "Maggi",
+
+                "salt": "Salt",
+                "mithu": "Salt",
+
+                "khand": "Sugar",
+
+            }
+
+            for word in words:
+
+                if word in aliases:
+
+                        self.item_entry.insert(
+                                0,
+                                aliases[word]
+                            )
+
+                        break
 
         # ---------------------------------
         # Transaction Type
