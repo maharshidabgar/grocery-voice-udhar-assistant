@@ -129,14 +129,17 @@ class VoiceParser:
             # ---------------- Milk ----------------
 
             "dud": "doodh",
-            "dudh": "doodh",
-            "dood": "doodh",
-            "dudh": "doodh",
+            "dudna": "doodh",
             "dudno": "doodh",
-            "dudhno": "doodh",
+            "dudh": "doodh",
             "dudhna": "doodh",
+            "dudhno": "doodh",
+            "dood": "doodh",
+            "doodna": "doodh",
+            "doodno": "doodh",
             "doodhno": "doodh",
             "doodhna": "doodh",
+            "doodh": "doodh",
             "milk": "doodh",
 
             # ---------------- Oil ----------------
@@ -173,6 +176,7 @@ class VoiceParser:
             "rupio": "rupiya",
             "rupiyo": "rupiya",
             "rupaiya": "rupiya",
+            "paisa": "rupiya",
 
             # ---------------- Gujarati Numbers ----------------
 
@@ -404,7 +408,7 @@ class VoiceParser:
 
         text = text.lower()
 
-        # Search longest phrases first
+        # Exact Match
         items = sorted(
             self.item_map.keys(),
             key=len,
@@ -416,6 +420,22 @@ class VoiceParser:
             if spoken_name in text:
 
                 return self.item_map[spoken_name]
+
+        # Fuzzy Match
+        words = text.split()
+
+        for word in words:
+
+            match = get_close_matches(
+                word,
+                self.item_map.keys(),
+                n=1,
+                cutoff=0.70
+            )
+
+            if match:
+
+                return self.item_map[match[0]]
 
         return ""
 
