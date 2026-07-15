@@ -442,6 +442,77 @@ class TransactionPage(ctk.CTkFrame):
 
 
     # ---------------------------------------
+    # Voice Customer
+    # ---------------------------------------
+
+    def voice_customer(self):
+
+        self.tts.speak("ગ્રાહકનું નામ બોલો.")
+
+        text = self.voice.listen()
+
+        if not text:
+
+            return None
+
+        print("Customer :", text)
+
+        return text
+
+    # ---------------------------------------
+    # Voice Item
+    # ---------------------------------------
+
+    def voice_item(self):
+
+        self.tts.speak("વસ્તુ બોલો.")
+
+        text = self.voice.listen()
+
+        if not text:
+
+            return None
+
+        print("Item :", text)
+
+        return text
+
+    # ---------------------------------------
+    # Voice Amount
+    # ---------------------------------------
+
+    def voice_amount(self):
+
+        self.tts.speak("રકમ બોલો.")
+
+        text = self.voice.listen()
+
+        if not text:
+
+            return None
+
+        print("Amount :", text)
+
+        return text
+
+    # ---------------------------------------
+    # Voice Type
+    # ---------------------------------------
+
+    def voice_type(self):
+
+        self.tts.speak("ઉધાર કે પેમેન્ટ બોલો.")
+
+        text = self.voice.listen()
+
+        if not text:
+
+            return None
+
+        print("Type :", text)
+
+        return text
+    # ---------------------------------------
     # Voice Transaction
     # ---------------------------------------
 
