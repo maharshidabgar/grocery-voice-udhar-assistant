@@ -4,6 +4,7 @@ from customer_page import CustomerPage
 from transaction_page import TransactionPage
 from ledger_page import LedgerPage
 from report_page import ReportPage
+from settings_page import SettingsPage
 
 # Theme
 ctk.set_appearance_mode("Light")
@@ -65,7 +66,7 @@ class GroceryGUI(ctk.CTk):
 
             ("📊 Reports", self.show_reports),
 
-            ("⚙ Settings", self.not_ready)
+            ("⚙ Settings", self.show_settings)
 
         ]
 
@@ -197,21 +198,21 @@ class GroceryGUI(ctk.CTk):
         )
 
     # ----------------------------------------
-    # Placeholder Pages
+    # Settings
     # ----------------------------------------
 
-    def not_ready(self):
+    def show_settings(self):
 
         self.clear_content()
 
-        label = ctk.CTkLabel(
-            self.content,
-            text="🚧 This module is under development.",
-            font=("Arial", 24, "bold")
+        page = SettingsPage(self.content)
+
+        page.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=20
         )
-
-        label.pack(expand=True)
-
 
 # ----------------------------------------
 # Run Application
