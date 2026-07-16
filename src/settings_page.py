@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from backup_manager import BackupManager
+from src.backup_manager import BackupManager
 
 
 class SettingsPage(ctk.CTkFrame):

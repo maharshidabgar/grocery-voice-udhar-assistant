@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from report_manager import ReportManager
+from src.report_manager import ReportManager
 
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment

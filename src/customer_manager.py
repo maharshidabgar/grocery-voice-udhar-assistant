@@ -1,6 +1,6 @@
-from database import Database
-from validator import validate_name, validate_mobile
-from exceptions import CustomerAlreadyExists
+from src.database import Database
+from src.validator import validate_name, validate_mobile
+from src.exceptions import CustomerAlreadyExists
 
 
 class CustomerManager:

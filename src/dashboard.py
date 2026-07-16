@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from dashboard_manager import DashboardManager
+from src.dashboard_manager import DashboardManager
 
 
 class Dashboard(ctk.CTkFrame):
