@@ -1,10 +1,13 @@
 import customtkinter as ctk
 
 from report_manager import ReportManager
+
 from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
+from openpyxl.utils import get_column_letter
+
 from tkinter import filedialog
 from datetime import datetime
-from openpyxl.styles import Font, PatternFill
 
 
 class ReportPage(ctk.CTkFrame):
@@ -301,6 +304,9 @@ class ReportPage(ctk.CTkFrame):
 
         transactions = self.report_manager.get_today_transactions()
 
+        if not transactions:
+            return
+
         file = filedialog.asksaveasfilename(
             defaultextension=".xlsx",
             filetypes=[("Excel File", "*.xlsx")],
@@ -311,42 +317,75 @@ class ReportPage(ctk.CTkFrame):
             return
 
         wb = Workbook()
-
         ws = wb.active
-
         ws.title = "Today's Report"
 
-        ws.append([
+        headers = [
             "Customer",
             "Type",
             "Amount",
             "Item",
             "Note",
             "Date"
-        ])
+        ]
 
-        header_fill = PatternFill(
+        ws.append(headers)
+
+        # ---------------------------------------
+        # Header Style
+        # ---------------------------------------
+
+        blue_fill = PatternFill(
             fill_type="solid",
-            start_color="1F4E78"
+            start_color="1F4E78",
+            end_color="1F4E78"
         )
 
-        header_font = Font(
+        white_font = Font(
             color="FFFFFF",
-            bold=True
+            bold=True,
+            size=12
+        )
+
+        center = Alignment(
+            horizontal="center",
+            vertical="center"
+        )
+
+        thin = Side(
+            style="thin",
+            color="000000"
+        )
+
+        border = Border(
+            left=thin,
+            right=thin,
+            top=thin,
+            bottom=thin
         )
 
         for cell in ws[1]:
 
-            cell.fill = header_fill
+            cell.fill = blue_fill
+            cell.font = white_font
+            cell.alignment = center
+            cell.border = border
 
-            cell.font = header_font
+        # ---------------------------------------
+        # Data
+        # ---------------------------------------
 
         for row in transactions:
 
             row = list(row)
 
-            row[2] = f"₹{float(row[2]):.2f}"
+            # Amount Format
+            try:
+                row[2] = f"₹{float(row[2]):.2f}"
+            except:
+                pass
 
+            # Date Format
             try:
 
                 dt = datetime.strptime(
@@ -359,16 +398,69 @@ class ReportPage(ctk.CTkFrame):
                 )
 
             except:
-
                 pass
 
             ws.append(row)
 
-        wb.save(file)
+        # ---------------------------------------
+        # Style All Cells
+        # ---------------------------------------
 
-        self.after(
-            100,
-            lambda: self.load_summary()
-        )
+        for row in ws.iter_rows():
+
+            for cell in row:
+
+                cell.border = border
+
+                if cell.row != 1:
+
+                    cell.alignment = Alignment(
+                        vertical="center"
+                    )
+
+        # ---------------------------------------
+        # Auto Width
+        # ---------------------------------------
+
+        for column in ws.columns:
+
+            max_length = 0
+
+            column_letter = get_column_letter(
+                column[0].column
+            )
+
+            for cell in column:
+
+                try:
+
+                    if len(str(cell.value)) > max_length:
+
+                        max_length = len(str(cell.value))
+
+                except:
+                    pass
+
+            ws.column_dimensions[
+                column_letter
+            ].width = max_length + 4
+
+        # ---------------------------------------
+        # Freeze Header
+        # ---------------------------------------
+
+        ws.freeze_panes = "A2"
+
+        # ---------------------------------------
+        # Auto Filter
+        # ---------------------------------------
+
+        ws.auto_filter.ref = ws.dimensions
+
+        # ---------------------------------------
+        # Save
+        # ---------------------------------------
+
+        wb.save(file)
 
         print("Report Exported :", file)
