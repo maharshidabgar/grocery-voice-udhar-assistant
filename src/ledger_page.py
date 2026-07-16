@@ -2,7 +2,8 @@ import customtkinter as ctk
 
 from customer_manager import CustomerManager
 from transaction_manager import TransactionManager
-
+from openpyxl import Workbook
+from tkinter import filedialog
 
 class LedgerPage(ctk.CTkFrame):
 
@@ -111,6 +112,29 @@ class LedgerPage(ctk.CTkFrame):
         self.search_entry.bind(
             "<KeyRelease>",
             self.search_ledger
+        )
+
+        # ---------------------------------------
+        # Export Buttons
+        # ---------------------------------------
+
+        button_frame = ctk.CTkFrame(self)
+
+        button_frame.pack(
+            fill="x",
+            padx=20,
+            pady=(0, 10)
+        )
+
+        ctk.CTkButton(
+            button_frame,
+            text="📊 Export Excel",
+            command=self.export_excel,
+            width=160
+        ).pack(
+            side="left",
+            padx=10,
+            pady=10
         )
 
         # ---------------------------------------
@@ -472,3 +496,58 @@ class LedgerPage(ctk.CTkFrame):
                     column=col,
                     padx=5
                 )
+
+    # ---------------------------------------
+    # Export Excel
+    # ---------------------------------------
+
+    def export_excel(self):
+
+        customer = self.customer_manager.find_customer_by_name(
+            self.customer_option.get()
+        )
+
+        if not customer:
+            return
+
+        customer_id = customer[0]
+
+        transactions = self.transaction_manager.get_customer_ledger(
+            customer_id
+        )
+
+        file = filedialog.asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[("Excel File", "*.xlsx")],
+            initialfile=f"{self.customer_option.get()}_Ledger.xlsx"
+        )
+
+        if not file:
+            return
+
+        wb = Workbook()
+
+        ws = wb.active
+
+        ws.title = "Ledger"
+
+        ws.append([
+            "ID",
+            "Type",
+            "Amount",
+            "Item",
+            "Note",
+            "Date"
+        ])
+
+        for row in transactions:
+
+            ws.append(row)
+
+        wb.save(file)
+
+        self.tts.speak(
+            "Excel Export Successful."
+        )
+
+        print("Excel Exported :", file)
