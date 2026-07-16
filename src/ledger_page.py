@@ -276,20 +276,51 @@ class LedgerPage(ctk.CTkFrame):
             )
 
         # Rows
+
         for transaction in transactions:
 
-            row = ctk.CTkFrame(
-                self.ledger_frame
+            transaction_type = transaction[1]
+
+        if transaction_type == "UDHAR":
+
+            row_color = "#d9fdd3"      # Light Green
+
+        else:
+
+            row_color = "#dbeafe"      # Light Blue
+
+        row = ctk.CTkFrame(
+            self.ledger_frame,
+            fg_color=row_color
+        )
+
+        row.pack(
+            fill="x",
+            pady=2
+        )
+
+        for col, value in enumerate(transaction):
+
+            ctk.CTkLabel(
+                row,
+                text=str(value),
+                width=120,
+                anchor="w",
+                fg_color="transparent"
+            ).grid(
+                row=0,
+                column=col,
+                padx=5
             )
 
-            row.pack(
+        row.pack(
                 fill="x",
                 pady=2
             )
 
-            for col, value in enumerate(transaction):
+        for col, value in enumerate(transaction):
 
-                ctk.CTkLabel(
+            ctk.CTkLabel(
                     row,
                     text=str(value),
                     width=120,
