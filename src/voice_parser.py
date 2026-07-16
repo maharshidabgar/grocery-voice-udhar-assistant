@@ -129,6 +129,9 @@ class VoiceParser:
             # ---------------- Milk ----------------
 
             "dud": "doodh",
+            "dude": "doodh",
+            "dudena": "doodh",
+            "dudeno": "doodh",
             "dudna": "doodh",
             "dudno": "doodh",
             "dudh": "doodh",
@@ -140,6 +143,8 @@ class VoiceParser:
             "doodhno": "doodh",
             "doodhna": "doodh",
             "doodh": "doodh",
+            "dudi": "doodh",
+            "dudu": "doodh",
             "milk": "doodh",
 
             # ---------------- Oil ----------------
@@ -237,6 +242,9 @@ class VoiceParser:
 
         self.udhar_keywords = [
             "udhar",
+            "uda",  
+            "udhaar",  
+            "udhhar",  
             "baki",
             "baaki",
             "credit",
@@ -253,10 +261,14 @@ class VoiceParser:
 
         self.payment_keywords = [
             "payment",
+            "pement",
             "pay",
             "paid",
             "jama",
+            "jamma",
             "apya",
+            "apay",
+            "api",
             "aapya",
             "apyo",
             "api",

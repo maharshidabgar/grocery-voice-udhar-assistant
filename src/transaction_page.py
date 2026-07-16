@@ -29,6 +29,13 @@ class TransactionPage(ctk.CTkFrame):
             pady=20
         )
 
+        self.voice_data = {
+            "customer": "",
+            "item": "",
+            "amount": "",
+            "type": ""
+        }
+
         self.create_widgets()
 
     # ---------------------------------------
@@ -252,6 +259,8 @@ class TransactionPage(ctk.CTkFrame):
 
         self.load_customers()
 
+    
+    
     # ---------------------------------------
     # Load Customers
     # ---------------------------------------
@@ -305,7 +314,36 @@ class TransactionPage(ctk.CTkFrame):
             return customer[0]
 
         return None
-
+    # ---------------------------------------
+    # Reset Voice Data
+    # ---------------------------------------
+    
+    def reset_voice_data(self):
+    
+        self.voice_data = {
+            "customer": "",
+            "item": "",
+            "amount": "",
+            "type": ""
+        }
+    
+    # ---------------------------------------
+    # Speak And Listen
+    # ---------------------------------------
+    
+    def speak_and_listen(self, message):
+    
+        self.tts.speak(message)
+    
+        text = self.voice.listen()
+    
+        if not text:
+    
+            return None
+    
+        print("Voice :", text)
+    
+        return text.strip()
     # ---------------------------------------
     # Save Transaction
     # ---------------------------------------
@@ -567,24 +605,50 @@ class TransactionPage(ctk.CTkFrame):
 
                     return
 
-            # -----------------------------
-            # Item
-            # -----------------------------
+                # -----------------------------
+                # Item
+                # -----------------------------
 
-            item = self.voice_item()
+                item = self.voice_item()
+                
+                if item:
 
-            if item:
+                    item = item.lower()
 
-                data = self.parser.parse(item)
+                    item_alias = {
 
-                self.item_entry.delete(0, "end")
+                        "doodh": "Milk",
+                        "dudh": "Milk",
+                        "dud": "Milk",
+                        "dude": "Milk",
+                        "dudno": "Milk",
 
-                if data["item"]:
+                        "tel": "Oil",
+                        "tail": "Oil",
 
-                    self.item_entry.insert(
-                        0,
-                        data["item"]
-                    )
+                        "lot": "Atta",
+                        "atta": "Atta",
+
+                        "chokha": "Rice",
+
+                        "cha": "Tea",
+
+                        "maggi": "Maggi",
+
+                    }
+
+                    self.item_entry.delete(0, "end")
+
+                    for key, value in item_alias.items():
+
+                        if key in item:
+
+                            self.item_entry.insert(
+                                0,
+                                value
+                            )
+
+                            break
 
             # -----------------------------
             # Amount
@@ -594,18 +658,47 @@ class TransactionPage(ctk.CTkFrame):
 
             if amount:
 
-                data = self.parser.parse(amount)
+                amount = amount.lower()
+
+                number_words = {
+
+                    "ek": "1",
+                    "be": "2",
+                    "tran": "3",
+                    "char": "4",
+                    "panch": "5",
+                    "chh": "6",
+                    "sat": "7",
+                    "aath": "8",
+                    "nav": "9",
+                    "das": "10",
+
+                }
+
+                for word, digit in number_words.items():
+
+                    amount = amount.replace(
+                        word,
+                        digit
+                    )
+
+                import re
+
+                match = re.search(
+                    r"\d+",
+                    amount
+                )
 
                 self.amount_entry.delete(
                     0,
                     "end"
                 )
 
-                if data["amount"]:
+                if match:
 
                     self.amount_entry.insert(
                         0,
-                        str(int(data["amount"]))
+                        match.group()
                     )
 
             # -----------------------------
@@ -616,14 +709,46 @@ class TransactionPage(ctk.CTkFrame):
 
             if transaction:
 
-                data = self.parser.parse(
-                    transaction
-                )
+                transaction = transaction.lower()
 
-                if data["type"]:
+                if any(
+
+                    word in transaction
+
+                    for word in [
+
+                        "udhar",
+                        "uda",
+                        "udar",
+                        "baki",
+                        "baaki"
+
+                    ]
+
+                ):
 
                     self.transaction_type.set(
-                        data["type"]
+                        "UDHAR"
+                    )
+
+                elif any(
+
+                    word in transaction
+
+                    for word in [
+
+                        "payment",
+                        "pay",
+                        "jama",
+                        "api",
+                        "apya"
+
+                    ]
+
+                ):
+
+                    self.transaction_type.set(
+                        "PAYMENT"
                     )
 
             # -----------------------------
