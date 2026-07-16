@@ -402,6 +402,24 @@ class ReportPage(ctk.CTkFrame):
 
             ws.append(row)
 
+            current_row = ws.max_row
+
+            type_cell = ws[f"B{current_row}"]
+
+            if row[1] == "UDHAR":
+
+                type_cell.font = Font(
+                    color="008000",
+                    bold=True
+                )
+
+            elif row[1] == "PAYMENT":
+
+                type_cell.font = Font(
+                    color="0000FF",
+                    bold=True
+                )
+
         # ---------------------------------------
         # Style All Cells
         # ---------------------------------------
@@ -414,9 +432,19 @@ class ReportPage(ctk.CTkFrame):
 
                 if cell.row != 1:
 
-                    cell.alignment = Alignment(
-                        vertical="center"
-                    )
+                    if cell.column == 3:
+
+                        cell.alignment = Alignment(
+                            horizontal="right",
+                            vertical="center"
+                        )
+
+                    else:
+
+                        cell.alignment = Alignment(
+                            horizontal="left",
+                            vertical="center"
+                        )
 
         # ---------------------------------------
         # Auto Width
