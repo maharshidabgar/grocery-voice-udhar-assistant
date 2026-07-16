@@ -75,17 +75,54 @@ class LedgerPage(ctk.CTkFrame):
             sticky="w"
         )
 
-        self.balance_label = ctk.CTkLabel(
-            top_frame,
-            text="Balance : ₹0",
-            font=("Arial", 18, "bold")
-        )
+        # ---------------------------------------
+        # Summary Cards
+        # ---------------------------------------
 
-        self.balance_label.grid(
+        summary_frame = ctk.CTkFrame(top_frame)
+
+        summary_frame.grid(
             row=0,
             column=2,
-            padx=30,
-            sticky="w"
+            padx=20,
+            pady=10,
+            sticky="e"
+        )
+
+        self.udhar_label = ctk.CTkLabel(
+            summary_frame,
+            text="🟢 Udhar : ₹0",
+            font=("Arial", 15, "bold")
+        )
+
+        self.udhar_label.pack(
+            anchor="w",
+            padx=10,
+            pady=2
+        )
+
+        self.payment_label = ctk.CTkLabel(
+            summary_frame,
+            text="🔵 Payment : ₹0",
+            font=("Arial", 15, "bold")
+        )
+
+        self.payment_label.pack(
+            anchor="w",
+            padx=10,
+            pady=2
+        )
+
+        self.balance_label = ctk.CTkLabel(
+            summary_frame,
+            text="🔴 Balance : ₹0",
+            font=("Arial", 16, "bold")
+        )
+
+        self.balance_label.pack(
+            anchor="w",
+            padx=10,
+            pady=2
         )
 
         self.ledger_frame = ctk.CTkScrollableFrame(
@@ -161,13 +198,32 @@ class LedgerPage(ctk.CTkFrame):
 
         customer_id = customer[0]
 
-        # Balance
+        # ---------------------------------------
+        # Summary
+        # ---------------------------------------
+
+        total_udhar = self.transaction_manager.get_total_udhar(
+            customer_id
+        )
+
+        total_payment = self.transaction_manager.get_total_payment(
+            customer_id
+        )
+
         balance = self.transaction_manager.get_balance(
             customer_id
         )
 
+        self.udhar_label.configure(
+            text=f"🟢 Udhar : ₹{total_udhar:.2f}"
+        )
+
+        self.payment_label.configure(
+            text=f"🔵 Payment : ₹{total_payment:.2f}"
+        )
+
         self.balance_label.configure(
-            text=f"Balance : ₹{balance:.2f}"
+            text=f"🔴 Balance : ₹{balance:.2f}"
         )
 
         # Ledger Data

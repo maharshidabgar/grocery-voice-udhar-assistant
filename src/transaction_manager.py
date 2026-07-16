@@ -113,6 +113,42 @@ class TransactionManager:
         return balance
 
     # ---------------------------------
+    # Total Udhar
+    # ---------------------------------
+
+    def get_total_udhar(self, customer_id):
+
+        result = self.db.fetchone(
+            """
+            SELECT COALESCE(SUM(amount),0)
+            FROM transactions
+            WHERE customer_id=?
+            AND transaction_type='UDHAR'
+            """,
+            (customer_id,)
+        )
+
+        return result[0]
+
+
+    # ---------------------------------
+    # Total Payment
+    # ---------------------------------
+
+    def get_total_payment(self, customer_id):
+
+        result = self.db.fetchone(
+            """
+            SELECT COALESCE(SUM(amount),0)
+            FROM transactions
+            WHERE customer_id=?
+            AND transaction_type='PAYMENT'
+            """,
+            (customer_id,)
+        )
+
+        return result[0]
+    # ---------------------------------
     # Customer Ledger
     # ---------------------------------
 
