@@ -211,3 +211,88 @@ class TransactionManager:
         )
 
         return "Transaction deleted successfully."
+
+    # ---------------------------------
+    # Today's Udhar
+    # ---------------------------------
+
+    def get_today_udhar(self):
+
+        result = self.db.fetchone(
+            """
+            SELECT COALESCE(SUM(amount),0)
+            FROM transactions
+            WHERE transaction_type='UDHAR'
+            AND DATE(created_at)=DATE('now','localtime')
+            """
+        )
+
+        return result[0]
+
+
+    # ---------------------------------
+    # Today's Payment
+    # ---------------------------------
+
+    def get_today_payment(self):
+
+        result = self.db.fetchone(
+            """
+            SELECT COALESCE(SUM(amount),0)
+            FROM transactions
+            WHERE transaction_type='PAYMENT'
+            AND DATE(created_at)=DATE('now','localtime')
+            """
+        )
+
+        return result[0]
+
+
+    # ---------------------------------
+    # Today's Transaction Count
+    # ---------------------------------
+
+    def get_today_transaction_count(self):
+
+        result = self.db.fetchone(
+            """
+            SELECT COUNT(*)
+            FROM transactions
+            WHERE DATE(created_at)=DATE('now','localtime')
+            """
+        )
+
+        return result[0]
+
+
+    # ---------------------------------
+    # Total Transaction Count
+    # ---------------------------------
+
+    def get_total_transaction_count(self):
+
+        result = self.db.fetchone(
+            """
+            SELECT COUNT(*)
+            FROM transactions
+            """
+        )
+
+        return result[0]
+
+
+    # ---------------------------------
+    # Total Collection
+    # ---------------------------------
+
+    def get_total_collection(self):
+
+        result = self.db.fetchone(
+            """
+            SELECT COALESCE(SUM(amount),0)
+            FROM transactions
+            WHERE transaction_type='PAYMENT'
+            """
+        )
+
+        return result[0]
