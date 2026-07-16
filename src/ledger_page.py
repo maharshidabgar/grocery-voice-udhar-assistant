@@ -76,6 +76,44 @@ class LedgerPage(ctk.CTkFrame):
         )
 
         # ---------------------------------------
+        # Search
+        # ---------------------------------------
+
+        search_frame = ctk.CTkFrame(self)
+
+        search_frame.pack(
+            fill="x",
+            padx=20,
+            pady=(0, 10)
+        )
+
+        ctk.CTkLabel(
+            search_frame,
+            text="🔍 Search"
+        ).pack(
+            side="left",
+            padx=10
+        )
+
+        self.search_entry = ctk.CTkEntry(
+            search_frame,
+            placeholder_text="Search Item, Note, Type..."
+        )
+
+        self.search_entry.pack(
+            side="left",
+            padx=10,
+            pady=10,
+            fill="x",
+            expand=True
+        )
+
+        self.search_entry.bind(
+            "<KeyRelease>",
+            self.search_ledger
+        )
+
+        # ---------------------------------------
         # Summary Cards
         # ---------------------------------------
 
@@ -321,6 +359,110 @@ class LedgerPage(ctk.CTkFrame):
         for col, value in enumerate(transaction):
 
             ctk.CTkLabel(
+                    row,
+                    text=str(value),
+                    width=120,
+                    anchor="w"
+                ).grid(
+                    row=0,
+                    column=col,
+                    padx=5
+                )
+
+    # ---------------------------------------
+    # Search Ledger
+    # ---------------------------------------
+
+    def search_ledger(self, event=None):
+
+        keyword = self.search_entry.get().lower()
+
+        selected_name = self.customer_option.get()
+
+        customer = self.customer_manager.find_customer_by_name(
+            selected_name
+        )
+
+        if not customer:
+            return
+
+        customer_id = customer[0]
+
+        transactions = self.transaction_manager.get_customer_ledger(
+            customer_id
+        )
+
+        if keyword:
+
+            transactions = [
+
+                transaction
+
+                for transaction in transactions
+
+                if keyword in str(transaction).lower()
+
+            ]
+
+        # Clear Table
+
+        for widget in self.ledger_frame.winfo_children():
+
+            widget.destroy()
+
+        # Header
+
+        header = ctk.CTkFrame(self.ledger_frame)
+
+        header.pack(fill="x", pady=5)
+
+        headings = [
+            "ID",
+            "Type",
+            "Amount",
+            "Item",
+            "Note",
+            "Date"
+        ]
+
+        for col, title in enumerate(headings):
+
+            ctk.CTkLabel(
+                header,
+                text=title,
+                width=120,
+                font=("Arial", 14, "bold")
+            ).grid(
+                row=0,
+                column=col,
+                padx=5
+            )
+
+        # Rows
+
+        for transaction in transactions:
+
+            transaction_type = transaction[1]
+
+            row_color = (
+                "#d9fdd3"
+                if transaction_type == "UDHAR"
+                else "#dbeafe"
+            )
+
+            row = ctk.CTkFrame(
+                self.ledger_frame,
+                fg_color=row_color
+            )
+
+            row.pack(
+                fill="x",
+                pady=2
+            )
+
+            for col, value in enumerate(transaction):
+
+                ctk.CTkLabel(
                     row,
                     text=str(value),
                     width=120,
