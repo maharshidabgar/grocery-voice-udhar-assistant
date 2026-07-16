@@ -3,6 +3,8 @@ import customtkinter as ctk
 from report_manager import ReportManager
 from openpyxl import Workbook
 from tkinter import filedialog
+from datetime import datetime
+from openpyxl.styles import Font, PatternFill
 
 
 class ReportPage(ctk.CTkFrame):
@@ -323,7 +325,43 @@ class ReportPage(ctk.CTkFrame):
             "Date"
         ])
 
+        header_fill = PatternFill(
+            fill_type="solid",
+            start_color="1F4E78"
+        )
+
+        header_font = Font(
+            color="FFFFFF",
+            bold=True
+        )
+
+        for cell in ws[1]:
+
+            cell.fill = header_fill
+
+            cell.font = header_font
+
         for row in transactions:
+
+            row = list(row)
+
+            row[2] = f"₹{float(row[2]):.2f}"
+
+            try:
+
+                dt = datetime.strptime(
+                    row[5],
+                    "%Y-%m-%d %H:%M:%S"
+                )
+
+                row[5] = dt.strftime(
+                    "%d-%b-%Y %I:%M %p"
+                )
+
+            except:
+
+                pass
+
             ws.append(row)
 
         wb.save(file)
