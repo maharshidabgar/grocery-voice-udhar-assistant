@@ -9,6 +9,17 @@ from openpyxl.utils import get_column_letter
 from tkinter import filedialog
 from datetime import datetime
 
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph
+)
+
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+
 
 class ReportPage(ctk.CTkFrame):
 
@@ -149,6 +160,18 @@ class ReportPage(ctk.CTkFrame):
             padx=10,
             pady=10
         )
+
+        ctk.CTkButton(
+            button_frame,
+            text="🖨 Export PDF",
+            width=170,
+            command=self.export_pdf
+        ).pack(
+            side="left",
+            padx=10,
+            pady=10
+        )
+
         # ---------------------------------------
         # Transactions List
         # ---------------------------------------
@@ -381,7 +404,7 @@ class ReportPage(ctk.CTkFrame):
 
             # Amount Format
             try:
-                row[2] = f"₹{float(row[2]):.2f}"
+                row[2] = f"Rs. {float(row[2]):.2f}"
             except:
                 pass
 
@@ -492,3 +515,98 @@ class ReportPage(ctk.CTkFrame):
         wb.save(file)
 
         print("Report Exported :", file)
+
+    # ---------------------------------------
+    # Export Report PDF
+    # ---------------------------------------
+
+    def export_pdf(self):
+
+        transactions = self.report_manager.get_today_transactions()
+
+        if not transactions:
+            return
+
+        file = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF File", "*.pdf")],
+            initialfile="Today's_Report.pdf"
+        )
+
+        if not file:
+            return
+
+        doc = SimpleDocTemplate(file)
+
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+        title = Paragraph(
+            "<b>Grocery Voice Udhar Assistant</b>",
+            styles["Title"]
+        )
+
+        elements.append(title)
+
+        elements.append(
+            Paragraph(
+                "<br/>Today's Transactions Report<br/><br/>",
+                styles["Heading2"]
+            )
+        )
+
+        data = [[
+            "Customer",
+            "Type",
+            "Amount",
+            "Item",
+            "Note",
+            "Date"
+        ]]
+
+        for row in transactions:
+
+            data.append([
+                str(row[0]),
+                str(row[1]),
+                f"₹{float(row[2]):.2f}",
+                str(row[3]) if row[3] else "-",
+                str(row[4]) if row[4] else "-",
+                datetime.strptime(
+                    row[5],
+                    "%Y-%m-%d %H:%M:%S"
+                ).strftime(
+                    "%d-%b-%Y %I:%M %p"
+                )
+                ])
+
+        table = Table(data)
+
+        table.setStyle(
+
+            TableStyle([
+
+                ("BACKGROUND", (0,0), (-1,0), colors.darkblue),
+
+                ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+
+                ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+
+                ("GRID", (0,0), (-1,-1), 1, colors.grey),
+
+                ("BACKGROUND", (0,1), (-1,-1), colors.beige),
+
+                ("ALIGN", (0,0), (-1,-1), "CENTER"),
+
+                ("BOTTOMPADDING", (0,0), (-1,0), 10),
+
+            ])
+
+        )
+
+        elements.append(table)
+
+        doc.build(elements)
+
+        print("PDF Exported :", file)
