@@ -243,6 +243,8 @@ class VoiceParser:
         self.udhar_keywords = [
             "udhar",
             "uda",  
+            "udar",  
+            "udarr",  
             "udhaar",  
             "udhhar",  
             "baki",
