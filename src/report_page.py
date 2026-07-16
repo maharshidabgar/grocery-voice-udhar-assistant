@@ -1,6 +1,8 @@
 import customtkinter as ctk
 
 from report_manager import ReportManager
+from openpyxl import Workbook
+from tkinter import filedialog
 
 
 class ReportPage(ctk.CTkFrame):
@@ -109,6 +111,39 @@ class ReportPage(ctk.CTkFrame):
             pady=10
         )
 
+        # ---------------------------------------
+        # Action Buttons
+        # ---------------------------------------
+
+        button_frame = ctk.CTkFrame(self)
+
+        button_frame.pack(
+            fill="x",
+            padx=20,
+            pady=(5, 10)
+        )
+
+        ctk.CTkButton(
+            button_frame,
+            text="🔄 Refresh",
+            width=150,
+            command=self.refresh_report
+        ).pack(
+            side="left",
+            padx=10,
+            pady=10
+        )
+
+        ctk.CTkButton(
+            button_frame,
+            text="📊 Export Excel",
+            width=170,
+            command=self.export_excel
+        ).pack(
+            side="left",
+            padx=10,
+            pady=10
+        )
         # ---------------------------------------
         # Transactions List
         # ---------------------------------------
@@ -245,3 +280,57 @@ class ReportPage(ctk.CTkFrame):
                     column=col,
                     padx=5
                 )
+
+    # ---------------------------------------
+    # Refresh Report
+    # ---------------------------------------
+
+    def refresh_report(self):
+
+        self.load_summary()
+
+        self.load_transactions()
+
+    # ---------------------------------------
+    # Export Report Excel
+    # ---------------------------------------
+
+    def export_excel(self):
+
+        transactions = self.report_manager.get_today_transactions()
+
+        file = filedialog.asksaveasfilename(
+            defaultextension=".xlsx",
+            filetypes=[("Excel File", "*.xlsx")],
+            initialfile="Today's_Report.xlsx"
+        )
+
+        if not file:
+            return
+
+        wb = Workbook()
+
+        ws = wb.active
+
+        ws.title = "Today's Report"
+
+        ws.append([
+            "Customer",
+            "Type",
+            "Amount",
+            "Item",
+            "Note",
+            "Date"
+        ])
+
+        for row in transactions:
+            ws.append(row)
+
+        wb.save(file)
+
+        self.after(
+            100,
+            lambda: self.load_summary()
+        )
+
+        print("Report Exported :", file)
