@@ -568,18 +568,16 @@ class ReportPage(ctk.CTkFrame):
         for row in transactions:
 
             data.append([
-                str(row[0]),
-                str(row[1]),
-                f"₹{float(row[2]):.2f}",
-                str(row[3]) if row[3] else "-",
-                str(row[4]) if row[4] else "-",
+                row[0],
+                row[1],
+                "Rs. {:.2f}".format(float(row[2])),
+                row[3] if row[3] else "-",
+                row[4] if row[4] else "-",
                 datetime.strptime(
                     row[5],
                     "%Y-%m-%d %H:%M:%S"
-                ).strftime(
-                    "%d-%b-%Y %I:%M %p"
-                )
-                ])
+                ).strftime("%d-%b-%Y %I:%M %p")
+            ])
 
         table = Table(data)
 
@@ -592,6 +590,7 @@ class ReportPage(ctk.CTkFrame):
                 ("TEXTCOLOR", (0,0), (-1,0), colors.white),
 
                 ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+                ("FONTNAME", (0,1), (-1,-1), "Helvetica"),
 
                 ("GRID", (0,0), (-1,-1), 1, colors.grey),
 
