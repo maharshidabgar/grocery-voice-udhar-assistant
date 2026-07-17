@@ -1,10 +1,10 @@
 import customtkinter as ctk
-from src.dashboard import Dashboard
-from src.customer_page import CustomerPage
-from src.transaction_page import TransactionPage
-from src.ledger_page import LedgerPage
-from src.report_page import ReportPage
-from src.settings_page import SettingsPage
+from dashboard import Dashboard
+from customer_page import CustomerPage
+from transaction_page import TransactionPage
+from ledger_page import LedgerPage
+from report_page import ReportPage
+from settings_page import SettingsPage
 
 # Theme
 ctk.set_appearance_mode("Light")

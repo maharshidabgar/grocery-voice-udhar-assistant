@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-from src.customer_manager import CustomerManager
+from customer_manager import CustomerManager
 
 
 class CustomerPage(ctk.CTkFrame):

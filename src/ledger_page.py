@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
-from src.customer_manager import CustomerManager
-from src.transaction_manager import TransactionManager
+from customer_manager import CustomerManager
+from transaction_manager import TransactionManager
 from openpyxl import Workbook
 from tkinter import filedialog
 

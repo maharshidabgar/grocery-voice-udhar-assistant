@@ -1,5 +1,5 @@
 import sqlite3
-from src.config import DATABASE_PATH
+from config import DATABASE_PATH
 
 
 class Database:

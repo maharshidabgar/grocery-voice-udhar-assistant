@@ -1,13 +1,13 @@
 import customtkinter as ctk
 from difflib import get_close_matches
 
-from src.customer_manager import CustomerManager
-from src.transaction_manager import TransactionManager
+from customer_manager import CustomerManager
+from transaction_manager import TransactionManager
 
-from src.voice_assistant import VoiceAssistant
-from src.voice_parser import VoiceParser
+from voice_assistant import VoiceAssistant
+from voice_parser import VoiceParser
 
-from src.tts import TextToSpeech
+from tts import TextToSpeech
 
 class TransactionPage(ctk.CTkFrame):
 
