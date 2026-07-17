@@ -1,125 +1,140 @@
 # 🛒 Grocery Voice Udhar Assistant
 
-A professional Python desktop application for grocery (kirana) shops to manage daily **Udhar (Credit)** records using **Voice Commands**, **SQLite Database**, and a modern **Tkinter GUI**.
+A modern **Python Desktop Application** for grocery (kirana) shops to manage **Udhar (Credit)** records efficiently using a clean graphical interface, SQLite database, voice input, and professional reporting tools.
 
 ---
 
-# 🚀 Project Status
+## ✨ Features
 
-> 🚧 Currently Under Development
-
-This project is being developed step by step using professional software engineering practices.
-
-Current Progress:
-
-- ✅ Project Structure
-- ✅ Virtual Environment Setup
-- ✅ SQLite Database Setup
-- ✅ Configuration Module
-- 🚧 Customer Management (In Progress)
-- ⏳ Transaction Management
-- ⏳ Voice Assistant
-- ⏳ Tkinter GUI
-- ⏳ Reports
-- ⏳ Excel Export
-
----
-
-# ✨ Planned Features
-
-## 👤 Customer Management
+### 👤 Customer Management
 
 - Add Customer
 - Update Customer
 - Delete Customer
 - Search Customer
-- Customer Alias Support
+- Mobile Number Support
 
----
-
-## 💰 Udhar Management
+### 💰 Transaction Management
 
 - Add Udhar
-- Add Payment
-- Customer Ledger
-- Pending Balance
-- Transaction History
+- Record Payment
+- Customer Balance
+- Transaction Notes
+- Item Details
+
+### 📒 Customer Ledger
+
+- Complete Customer History
+- Outstanding Balance
+- Transaction Timeline
+
+### 📊 Reports
+
+- Daily Transactions
+- Summary Dashboard
+- Outstanding Amount
+- Customer Statistics
+
+### 📄 Export
+
+- Excel Export (.xlsx)
+- PDF Report Export
+
+### 💾 Backup & Restore
+
+- Database Backup
+- Database Restore
+
+### 🎤 Voice Assistant
+
+- Voice-based Transaction Entry
+- Customer Name Recognition
+- Item Recognition
+- Amount Recognition
+- Gujarati Voice Workflow (Version 1)
 
 ---
 
-## 🎤 Voice Assistant
+## 🛠️ Technologies Used
 
-- English Voice Commands
-- Hinglish Voice Commands
-- Grocery Shop Friendly Commands
+- Python 3
+- CustomTkinter
+- SQLite
+- OpenAI Whisper
+- pyttsx3
+- OpenPyXL
+- ReportLab
+- Pandas
 
-Examples:
+---
 
-```text
-Ramesh udhar 20 biscuit
+# 📸 Application Screenshots
 
-Ramesh paid 10
+## 🏠 Dashboard
 
-Ramesh na 20 rupiya baki
+![Dashboard](screenshots/dashboard.png)
 
-Ramesh e 10 rupiya aapya
+---
 
-Baki Ramesh
+## 👤 Customer Management
 
-Today's Report
-```
+![Customers](screenshots/customers.png)
+
+---
+
+## 💰 Transactions
+
+![Transactions](screenshots/transactions.png)
+
+---
+
+## 📒 Customer Ledger
+
+![Ledger](screenshots/ledger.png)
 
 ---
 
 ## 📊 Reports
 
-- Daily Report
-- Monthly Report
-- Pending Customers
-- Customer Ledger
+![Reports](screenshots/reports.png)
 
 ---
 
-## 📁 Export
+## ⚙️ Settings
 
-- Excel Export
-- Pending Customer Report
-- Transaction Report
+![Settings](screenshots/settings.png)
 
 ---
 
-# 🏗️ Project Structure
+# 📂 Project Structure
 
 ```text
 Grocery-Voice-Udhar-Assistant/
 │
-├── .venv/
 ├── database/
-├── exports/
-├── logs/
+├── screenshots/
 ├── src/
-│   ├── config.py
+│   ├── dashboard.py
+│   ├── customer_page.py
+│   ├── transaction_page.py
+│   ├── ledger_page.py
+│   ├── report_page.py
+│   ├── settings_page.py
 │   ├── database.py
-│   ├── main.py
-│   └── utils.py
+│   ├── customer_manager.py
+│   ├── transaction_manager.py
+│   ├── report_manager.py
+│   ├── backup_manager.py
+│   ├── voice_assistant.py
+│   ├── voice_parser.py
+│   ├── tts.py
+│   ├── config.py
+│   └── gui.py
 │
-├── README.md
 ├── requirements.txt
+├── README.md
 └── .gitignore
 ```
-
----
-
-# 🛠️ Technologies
-
-- Python
-- SQLite
-- Tkinter
-- SpeechRecognition
-- PyAudio
-- pyttsx3
-- pandas
-- openpyxl
 
 ---
 
@@ -128,24 +143,22 @@ Grocery-Voice-Udhar-Assistant/
 Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/grocery-voice-udhar-assistant.git
+git clone https://github.com/maharshidabgar/Grocery-Voice-Udhar-Assistant.git
 ```
 
-Go to project folder
+Go to the project folder
 
 ```bash
-cd grocery-voice-udhar-assistant
+cd Grocery-Voice-Udhar-Assistant
 ```
 
-Create virtual environment
+Create a virtual environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate environment
-
-### Windows
+Activate the virtual environment (Windows)
 
 ```bash
 .venv\Scripts\activate
@@ -157,22 +170,36 @@ Install dependencies
 pip install -r requirements.txt
 ```
 
-Run application
+Run the application
 
 ```bash
-python src/main.py
+python src\gui.py
 ```
+---
+
+# 🚀 Future Improvements
+
+The following features are planned for future releases:
+
+- 🔊 Improved Gujarati Voice Recognition
+- 📱 Mobile Application
+- ☁️ Cloud Backup & Sync
+- 📷 Barcode Scanner Support
+- 📦 Product Inventory Management
+- 📈 Monthly & Yearly Analytics
+- 📤 WhatsApp Report Sharing
+- 👥 Multi-User Login System
 
 ---
 
-# 🎯 Future Improvements
+# 🤝 Contributing
 
-- Gujarati Voice Recognition
-- WhatsApp Reminder
-- Backup & Restore
-- Cloud Sync
-- Barcode Support
-- Mobile Application
+Contributions, suggestions, and improvements are always welcome.
+
+1. Fork the repository.
+2. Create a new feature branch.
+3. Commit your changes.
+4. Open a Pull Request.
 
 ---
 
@@ -180,8 +207,23 @@ python src/main.py
 
 **Maharshi Dabgar**
 
-Python Developer | M.Sc. IT Student | Aspiring Data Scientist
+**M.Sc. IT Student | Aspiring Data Scientist | Python Developer**
+
+### Connect with me
+
+- GitHub: https://github.com/maharshidabgar
+- LinkedIn: *(Add your LinkedIn profile URL here)*
 
 ---
 
-## ⭐ If you like this project, don't forget to star the repository.
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# ⭐ Support
+
+If you found this project useful, please consider giving it a **⭐ Star** on GitHub.
+
+Thank you for visiting this repository! ❤️
