@@ -65,6 +65,7 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+*.spec
 
 # ==========================================
 # Environment Variables
@@ -78,3 +79,6 @@ dist/
 
 *.tmp
 *.bak
+
+# Whisper Cache
+.cache/

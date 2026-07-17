@@ -7,17 +7,17 @@
 customtkinter>=5.2.2
 Pillow>=11.0.0
 
-# Database & Excel
+# Excel Export
 openpyxl>=3.1.5
 pandas>=2.3.0
 
 # PDF Export
-reportlab>=4.0.0
+reportlab>=4.4.2
 
 # Voice Assistant
 openai-whisper
-sounddevice
-soundfile
+sounddevice>=0.5.2
+soundfile>=0.13.1
 pyttsx3>=2.99
 
 # Environment Variables
