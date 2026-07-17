@@ -1,5 +1,10 @@
 # 🛒 Grocery Voice Udhar Assistant
 
+Python 3.12
+MIT License
+Version 1.0
+Stable
+
 A modern **Python Desktop Application** for grocery (kirana) shops to manage **Udhar (Credit)** records efficiently using a clean graphical interface, SQLite database, voice input, and professional reporting tools.
 
 ---
